@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xch-cms
+  namespace: meta-cogni
+  labels:
+    app: xch-cms
+    component: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xch-cms
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: xch-cms
+        component: web
+    spec:
+      imagePullSecrets:
+        - name: acr-registry-secret
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: xch-cms
+          # 默认使用 ACR VPC 镜像地址,便于 ACK 在专有网络内拉取私有镜像
+          image: crpi-2xbf44rg544imbew-vpc.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/meta-cogni-cms:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 3
+          # 安全加固
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false

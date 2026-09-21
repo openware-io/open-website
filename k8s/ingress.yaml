@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: xch-cms
+  namespace: meta-cogni
+  labels:
+    app: xch-cms
+    component: web
+  annotations:
+    # Nginx Ingress Controller 注解
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    # 如使用 cert-manager 自动签发,取消下面注释并确保 ClusterIssuer 已就绪
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  # TLS:替换为你的域名;Secret 可手工创建或由 cert-manager 生成
+  tls:
+    - hosts:
+        - example.com
+        - www.example.com
+      secretName: openware-tls
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: xch-cms
+                port:
+                  number: 80
+    - host: www.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: xch-cms
+                port:
+                  number: 80

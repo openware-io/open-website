@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="cancel.title">账号注销 | WV Chat</title>
+  <meta name="description" content="申请注销 WV Chat 账号" data-i18n-attr="content:cancel.desc">
+  <link rel="icon" type="image/png" href="/assets/wv-chat-logo.png">
+  <link rel="preconnect" href="https://api.dev.example.com" crossorigin>
+  <link rel="dns-prefetch" href="https://api.dev.example.com">
+  <style>
+    :root {
+      --blue: #007aff;
+      --green: #2fd084;
+      --red: #ff4d4f;
+      --ink: #172033;
+      --muted: #657084;
+      --line: #e7ebf2;
+      --bg: #f6f8fc;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    .wrap { width: min(760px, calc(100% - 40px)); margin: 0 auto; }
+
+    header {
+      background: rgba(255,255,255,.85);
+      border-bottom: 1px solid var(--line);
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: saturate(180%) blur(12px);
+    }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 19px; color: var(--ink); }
+    .logo { width: 38px; height: 38px; border-radius: 10px; display: block; object-fit: cover; box-shadow: 0 8px 20px rgba(0,122,255,.22); }
+    .links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; font-size: 15px; }
+    .links a { color: var(--muted); }
+    .links a.active, .links a:hover { color: var(--blue); }
+    .lang-btn { min-height: 34px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-weight: 700; font-size: 14px; cursor: pointer; }
+    .lang-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    main { padding: 56px 0 72px; }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+      padding: 40px; box-shadow: 0 18px 48px rgba(31,49,83,.08);
+    }
+    .card h1 { margin: 0 0 10px; font-size: clamp(24px, 4vw, 34px); }
+    .card .lead { color: var(--muted); margin: 0 0 26px; }
+
+    .field { margin-bottom: 18px; }
+    .field label { display: block; font-weight: 600; margin-bottom: 8px; }
+    .field input {
+      width: 100%; min-height: 48px; padding: 0 14px; border-radius: 10px;
+      border: 1px solid var(--line); font-size: 15px; color: var(--ink); background: #fff;
+    }
+    .field input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,122,255,.12); }
+    .agree { display: flex; align-items: flex-start; gap: 8px; margin: 20px 0; color: var(--muted); font-size: 14px; }
+    .agree input { margin-top: 5px; }
+    .agree a { color: var(--blue); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 38px;
+      border-radius: 13px; border: 1px solid var(--line); background: var(--blue); color: #fff; font-weight: 700; font-size: 17px;
+      cursor: pointer; box-shadow: 0 12px 28px rgba(0,122,255,.3); transition: transform .1s ease, filter .1s ease;
+    }
+    .btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    .btn:disabled { opacity: .6; cursor: not-allowed; }
+    .btn.secondary { background: #fff; color: var(--ink); box-shadow: none; }
+
+    .error { display: none; margin-top: 14px; color: var(--red); font-size: 14px; }
+
+    .status-card { display: none; text-align: center; }
+    .spinner {
+      width: 46px; height: 46px; margin: 10px auto 18px; border-radius: 50%;
+      border: 4px solid var(--line); border-top-color: var(--blue); animation: spin .9s linear infinite;
+    }
+    .status-card .big { font-size: 52px; line-height: 1; }
+    .status-card h2 { margin: 16px 0 8px; font-size: 24px; }
+    .status-card .lead { color: var(--muted); margin: 0 auto 24px; max-width: 520px; }
+    .steps { list-style: none; margin: 0 auto; padding: 0; max-width: 480px; text-align: left; }
+    .step { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .step .dot { width: 22px; height: 22px; border-radius: 50%; flex: 0 0 auto; display: grid; place-items: center; font-size: 12px; color: #fff; background: var(--line); }
+    .step.done .dot { background: var(--green); }
+    .step .label { flex: 1; }
+    .step .state { color: var(--muted); font-size: 13px; }
+    .step.done .state { color: var(--green); }
+    .back-link { display: inline-block; margin-top: 24px; }
+
+    .dialog-overlay { display: none; position: fixed; inset: 0; background: rgba(23,32,51,.45); z-index: 50; align-items: center; justify-content: center; padding: 20px; }
+    .dialog-overlay.open { display: flex; }
+    .dialog { background: #fff; border-radius: 18px; padding: 28px; max-width: 440px; width: 100%; box-shadow: 0 24px 64px rgba(31,49,83,.3); }
+    .dialog h3 { margin: 0 0 10px; font-size: 19px; }
+    .dialog p { color: var(--muted); margin: 0 0 22px; }
+    .dialog .actions { display: flex; gap: 12px; justify-content: flex-end; }
+
+    footer { padding: 36px 0; color: var(--muted); border-top: 1px solid var(--line); text-align: center; font-size: 14px; }
+    footer p { margin: 6px 0; }
+    footer a { color: inherit; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <nav>
+        <a class="brand" href="/index.html"><img class="logo" src="/assets/wv-chat-logo.png" alt="WV Chat" width="38" height="38"><span>WV Chat</span></a>
+        <div class="links">
+          <a href="/index.html#company" data-i18n="nav.company">公司简介</a>
+          <a href="/index.html#features" data-i18n="nav.features">功能</a>
+          <a href="/download.html" data-i18n="nav.download">下载</a>
+          <a href="/developer.html" data-i18n="nav.developer">开发者</a>
+          <a href="/index.html#support" data-i18n="nav.support">技术支持</a>
+          <a href="/cancel.html" class="active" data-i18n="nav.cancel">账号注销</a>
+          <a href="/privacy.html" data-i18n="nav.privacy">隐私政策</a>
+          <a href="/terms.html" data-i18n="nav.terms">用户协议</a>
+          <button class="lang-btn" type="button" data-lang-toggle>EN</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="card" id="form-card">
+        <h1 data-i18n="cancel.h1">申请注销 WV Chat 账号</h1>
+        <p class="lead" data-i18n="cancel.lead">注销前需先登录验证身份。注销后，你的账号、聊天记录及全部关联数据将被永久删除且无法恢复，请确认已备份需要保留的信息。</p>
+
+        <div class="field">
+          <label for="account" data-i18n="cancel.form.account">用户名</label>
+          <input id="account" type="text" autocomplete="username" data-i18n-attr="placeholder:cancel.form.account.ph" placeholder="请输入登录用户名">
+        </div>
+        <div class="field">
+          <label for="password" data-i18n="cancel.form.password">登录密码</label>
+          <input id="password" type="password" autocomplete="current-password" data-i18n-attr="placeholder:cancel.form.password.ph" placeholder="请输入登录密码">
+        </div>
+
+        <div class="agree">
+          <input id="agree" type="checkbox">
+          <span><span data-i18n="cancel.agree">我已阅读并同意</span> <a href="/privacy.html" data-i18n="nav.privacy">隐私政策</a> 与 <a href="/terms.html" data-i18n="nav.terms">用户协议</a></span>
+        </div>
+
+        <button class="btn" id="submit-btn" type="button" data-i18n="cancel.submit">提交注销申请</button>
+        <div class="error" id="error"></div>
+      </div>
+
+      <div class="card status-card" id="status-card">
+        <div id="status-icon"></div>
+        <h2 id="status-title"></h2>
+        <p class="lead" id="status-lead"></p>
+        <div id="steps"></div>
+        <a class="back-link" href="/index.html" data-i18n="cancel.back">返回首页</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p data-i18n="footer.copyright">©2026 深圳市译识编元科技有限公司</p>
+      <p><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">粤ICP备2026106235号-1</a></p>
+    </div>
+  </footer>
+
+  <div class="dialog-overlay" id="dialog">
+    <div class="dialog">
+      <h3 data-i18n="cancel.dialog.title">确认注销账号</h3>
+      <p data-i18n="cancel.dialog.text">注销后，账号、聊天记录及全部关联数据将被永久删除且无法恢复。确定要注销吗？</p>
+      <div class="actions">
+        <button class="btn secondary" id="dialog-cancel" type="button" data-i18n="cancel.dialog.cancel">取消</button>
+        <button class="btn" id="dialog-confirm" type="button" data-i18n="cancel.dialog.confirm">确认注销</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/i18n.js"></script>
+  <script>
+    (function () {
+      var API_BASE = 'https://api.dev.example.com/api/v1';
+      var STEP_CODES = ['account', 'chat_records', 'device_tokens', 'friends', 'profile_settings', 'client_data'];
+      var STORAGE_KEY = 'wv-cancel-app';
+
+      var formCard = document.getElementById('form-card');
+      var statusCard = document.getElementById('status-card');
+      var statusIcon = document.getElementById('status-icon');
+      var statusTitle = document.getElementById('status-title');
+      var statusLead = document.getElementById('status-lead');
+      var stepsBox = document.getElementById('steps');
+      var accountInput = document.getElementById('account');
+      var passwordInput = document.getElementById('password');
+      var agreeInput = document.getElementById('agree');
+      var submitBtn = document.getElementById('submit-btn');
+      var errorBox = document.getElementById('error');
+      var dialog = document.getElementById('dialog');
+      var dialogConfirm = document.getElementById('dialog-confirm');
+      var dialogCancel = document.getElementById('dialog-cancel');
+      var pollTimer = null;
+      var currentStatus = null;
+
+      function t(key) {
+        var lang = (window.WV && window.WV.getLang) ? window.WV.getLang() : 'zh';
+        var d = (window.WV && window.WV.dict && window.WV.dict[lang]) ? window.WV.dict[lang] : {};
+        return d[key] != null ? d[key] : key;
+      }
+
+      function escapeHtml(value) {
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.style.display = 'block';
+      }
+      function clearError() { errorBox.style.display = 'none'; }
+
+      function mapError(status, body) {
+        if (status === 401) return t('cancel.error.invalid');
+        if (status === 403) return t('cancel.error.disabled');
+        if (status === 409) return t('cancel.error.conflict');
+        if (status === 410) return t('cancel.error.gone');
+        if (body && body.message) return body.message;
+        return t('cancel.error.generic');
+      }
+
+      function validate() {
+        clearError();
+        if (!accountInput.value.trim() || !passwordInput.value) {
+          showError(t('cancel.error.invalid'));
+          return false;
+        }
+        if (!agreeInput.checked) {
+          showError(t('cancel.agreeRequired'));
+          return false;
+        }
+        return true;
+      }
+
+      function submit() {
+        clearError();
+        submitBtn.disabled = true;
+        var account = accountInput.value.trim();
+        var password = passwordInput.value;
+        // 1. 认证：先登录获取 JWT（认证通过后才能申请注销）
+        fetch(API_BASE + '/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: account, password: password })
+        })
+          .then(function (resp) {
+            return resp.json().then(function (json) { return { ok: resp.ok, status: resp.status, body: json }; })
+              .catch(function () { return { ok: resp.ok, status: resp.status, body: {} }; });
+          })
+          .then(function (res) {
+            if (!res.ok) { showError(mapError(res.status, res.body)); return null; }
+            var token = res.body.access_token;
+            if (!token) { showError(t('cancel.error.generic')); return null; }
+            // 2. 认证通过后提交注销申请
+            return fetch(API_BASE + '/account-cancellations', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+              body: JSON.stringify({ password: password, source: 'web' })
+            }).then(function (resp2) {
+              return resp2.json().then(function (json2) { return { ok: resp2.ok, status: resp2.status, body: json2 }; })
+                .catch(function () { return { ok: resp2.ok, status: resp2.status, body: {} }; });
+            });
+          })
+          .then(function (res) {
+            if (!res) return;
+            if (!res.ok) { showError(mapError(res.status, res.body)); return; }
+            var app = { id: res.body.applicationId, token: res.body.statusToken };
+            try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(app)); } catch (e) { /* ignore */ }
+            renderStatus({ status: res.body.status, steps: [] });
+            poll();
+          })
+          .catch(function () { showError(t('cancel.error.network')); })
+          .finally(function () { submitBtn.disabled = false; });
+      }
+
+      function poll() {
+        clearTimeout(pollTimer);
+        var saved = null;
+        try { saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) { saved = null; }
+        if (!saved || !saved.id) return;
+        fetch(API_BASE + '/account-cancellations/' + saved.id + '?token=' + encodeURIComponent(saved.token))
+          .then(function (resp) {
+            return resp.json().then(function (json) { return { ok: resp.ok, body: json }; })
+              .catch(function () { return { ok: false, body: {} }; });
+          })
+          .then(function (res) {
+            if (!res.ok) { showError(t('cancel.error.network')); return; }
+            renderStatus(res.body);
+            if (res.body.status === 'COMPLETED' || res.body.status === 'FAILED') return;
+            pollTimer = setTimeout(poll, 2000);
+          })
+          .catch(function () { showError(t('cancel.error.network')); });
+      }
+
+      function renderStatus(data) {
+        currentStatus = data;
+        formCard.style.display = 'none';
+        statusCard.style.display = 'block';
+
+        var status = data.status || 'PENDING';
+        if (status === 'FAILED') {
+          statusIcon.innerHTML = '<div class="big">⚠️</div>';
+          statusTitle.textContent = t('cancel.failed.title');
+          statusLead.textContent = t('cancel.failed.lead');
+          stepsBox.innerHTML = '';
+          return;
+        }
+
+        var completed = status === 'COMPLETED';
+        statusIcon.innerHTML = completed ? '<div class="big">✅</div>' : '<div class="spinner"></div>';
+        statusTitle.textContent = completed ? t('cancel.completed.title') : t('cancel.pending.title');
+        statusLead.textContent = completed ? t('cancel.completed.lead') : t('cancel.pending.lead');
+
+        var stepMap = {};
+        (data.steps || []).forEach(function (s) { stepMap[s.code] = s.completed; });
+
+        var html = '<ul class="steps">';
+        STEP_CODES.forEach(function (code) {
+          var done = !!stepMap[code] || completed;
+          var cls = done ? 'done' : 'pending';
+          var label = t('cancel.step.' + code) || code;
+          var state = done ? t('cancel.step.done') : t('cancel.step.pending');
+          html += '<li class="step ' + cls + '"><span class="dot">' + (done ? '✓' : '') + '</span>'
+            + '<span class="label">' + escapeHtml(label) + '</span>'
+            + '<span class="state">' + escapeHtml(state) + '</span></li>';
+        });
+        html += '</ul>';
+        stepsBox.innerHTML = html;
+      }
+
+      submitBtn.addEventListener('click', function () {
+        if (!validate()) return;
+        dialog.classList.add('open');
+      });
+
+      dialogCancel.addEventListener('click', function () { dialog.classList.remove('open'); });
+      dialogConfirm.addEventListener('click', function () {
+        dialog.classList.remove('open');
+        submit();
+      });
+
+      document.addEventListener('wv:langchange', function () {
+        if (currentStatus) renderStatus(currentStatus);
+      });
+
+      // 恢复上次未完成的申请状态
+      var saved = null;
+      try { saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) { saved = null; }
+      if (saved && saved.id) {
+        renderStatus({ status: 'PENDING', steps: [] });
+        poll();
+      }
+    })();
+  </script>
+</body>
+</html>

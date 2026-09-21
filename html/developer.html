@@ -1,0 +1,718 @@
+<!doctype html>
+<!--
+  ============================================================================
+  本页是 IM 开放平台第三方接入指南（v3）的对外发布镜像 / Published mirror。
+  唯一源文件（source of truth）：
+    gv_im_server/docs/renovation/IM_OPEN_PLATFORM_02_INTEGRATION_GUIDE.md
+  一致性要求：接口清单、接入流程、示例（域名 / appId / 回调 / 参数）、scope 说明与
+  验收标准发生变更时，必须同时更新上述 Markdown 指南与本页，两份内容不得相互矛盾。
+  申请与审批的判定口径另见：gv_im_server/docs/renovation/IM_OPEN_PLATFORM_06_REVIEW_SOP.md
+  ============================================================================
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="dev.title">开发者 - IM 开放平台第三方接入 | WV Chat</title>
+  <meta name="description" content="IM 开放平台第三方接入引导" data-i18n-attr="content:dev.desc">
+  <link rel="icon" type="image/png" href="/assets/wv-chat-logo.png">
+  <style>
+    :root { --blue:#007aff; --green:#2fd084; --ink:#172033; --muted:#657084; --line:#e7ebf2; --bg:#f6f8fc; --card:#fff; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Arial,sans-serif; color:var(--ink); background:var(--bg); line-height:1.7; }
+    a { color:var(--blue); text-decoration:none; }
+    .wrap { width:min(1080px, calc(100% - 40px)); margin:0 auto; }
+    header { background:linear-gradient(135deg,#f7fbff 0%,#edf8f4 100%); border-bottom:1px solid var(--line); }
+    nav { display:flex; align-items:center; justify-content:space-between; padding:20px 0; gap:16px; }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:800; font-size:20px; color:var(--ink); }
+    .logo { width:42px; height:42px; border-radius:12px; box-shadow:0 10px 24px rgba(0,122,255,.22); }
+    .links { display:flex; gap:18px; flex-wrap:wrap; font-size:15px; align-items:center; }
+    .btn { min-height:40px; padding:0 16px; border-radius:10px; border:1px solid var(--line); background:#fff; font-weight:700; cursor:pointer; }
+    .hero { padding:60px 0 40px; }
+    h1 { font-size:clamp(30px,5vw,48px); margin:0 0 14px; }
+    .lead { font-size:18px; color:var(--muted); max-width:760px; }
+    section { padding:36px 0; }
+    h2 { font-size:26px; margin:0 0 16px; }
+    h3 { font-size:18px; margin:24px 0 10px; }
+    .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; }
+    .step { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; }
+    .step .n { display:inline-grid; place-items:center; width:30px; height:30px; border-radius:50%; background:var(--blue); color:#fff; font-weight:800; margin-bottom:10px; }
+    .step h3 { margin:0 0 8px; font-size:18px; }
+    .step p { margin:0; color:var(--muted); font-size:14px; }
+    table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+    th, td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); font-size:14px; }
+    th { background:#f2f6fb; font-weight:700; }
+    tr:last-child td { border-bottom:none; }
+    code { background:#eef1f7; padding:2px 6px; border-radius:6px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; }
+    pre { background:#f2f6fb; border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin:12px 0 0; overflow:auto; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; line-height:1.6; }
+    pre code { background:none; padding:0; font-size:13px; }
+    .seq-title { font-size:15px; margin:20px 0 2px; color:var(--ink); }
+    .seq { list-style:none; margin:12px 0 0; padding:0; }
+    .seq li { padding:14px 16px; border:1px solid var(--line); border-radius:12px; background:var(--card); margin-bottom:10px; }
+    .seq li:last-child { margin-bottom:0; }
+    .seq-hop { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+    .seq-n { width:22px; height:22px; border-radius:50%; background:var(--blue); color:#fff; font-weight:800; font-size:12px; display:inline-grid; place-items:center; flex:0 0 auto; }
+    .seq-actor { display:inline-flex; align-items:center; padding:3px 10px; border-radius:999px; font-weight:700; font-size:13px; border:1px solid transparent; }
+    .seq-actor.app { background:#eef4ff; border-color:#d6e6ff; color:#1a5fd0; }
+    .seq-actor.im { background:#e8fbf1; border-color:#c9f0dc; color:#1a7a4a; }
+    .seq-actor.user { background:#fff4e5; border-color:#ffe0b8; color:#b5651a; }
+    .seq-arr { color:var(--muted); font-weight:700; }
+    .seq-msg { color:var(--muted); font-size:14px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; line-height:1.6; }
+    .panel { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px; margin-top:16px; }
+    .panel ul, .panel ol { margin:8px 0 0; padding-left:20px; }
+    .panel p { margin:0; }
+    .panel p + p { margin-top:10px; }
+    .toc-sec { padding:24px 0 0; }
+    .toc-title { margin:0 0 8px; font-weight:700; }
+    .toc a { display:inline-block; margin:0 16px 6px 0; font-size:14px; }
+    footer { padding:30px 0; color:var(--muted); border-top:1px solid var(--line); text-align:center; font-size:14px; }
+    @media (max-width:820px) { nav { flex-direction:column; align-items:flex-start; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <nav>
+        <a class="brand" href="/index.html"><img class="logo" src="/assets/wv-chat-logo.png" alt="WV Chat Logo" width="42" height="42"><span>WV Chat</span></a>
+        <div class="links">
+          <a href="/index.html#company" data-i18n="nav.company">公司简介</a>
+          <a href="/index.html#features" data-i18n="nav.features">功能</a>
+          <a href="/download.html" data-i18n="nav.download">下载</a>
+          <a href="/developer.html" data-i18n="nav.developer">开发者</a>
+          <a href="/index.html#support" data-i18n="nav.support">技术支持</a>
+          <a href="/cancel.html" data-i18n="nav.cancel">账号注销</a>
+          <a href="/privacy.html" data-i18n="nav.privacy">隐私政策</a>
+          <a href="/terms.html" data-i18n="nav.terms">用户协议</a>
+          <button class="btn" type="button" data-lang-toggle>EN</button>
+        </div>
+      </nav>
+      <div class="hero">
+        <h1 data-i18n="dev.hero.title">IM 开放平台 · 第三方接入</h1>
+        <p class="lead" data-i18n="dev.hero.lead">任何第三方业务系统（SaaS / 打车 / 电商 / 本地生活等）按标准 5 步流程接入 IM：申请 → 审核 → 用户授权 → 后台换证 → 用户同步与业务打通。第三方系统保有独立业务闭环，脱离 IM 也能完整运行。</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="toc-sec">
+      <div class="wrap">
+        <div class="panel toc">
+          <p class="toc-title" data-i18n="dev.toc.title">本页导航</p>
+          <a href="#overview" data-i18n="dev.toc.overview">接入总览与流程</a>
+          <a href="#apply" data-i18n="dev.toc.apply">申请与审批</a>
+          <a href="#front-back" data-i18n="dev.toc.fb">前后台差异</a>
+          <a href="#a380" data-i18n="dev.toc.a380">A380 接入示例</a>
+          <a href="#api" data-i18n="dev.toc.api">标准接口清单</a>
+          <a href="#selftest" data-i18n="dev.toc.selftest">上线前自测</a>
+          <a href="#acceptance" data-i18n="dev.toc.accept">验收清单</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="overview">
+      <div class="wrap">
+        <h2 data-i18n="dev.overview.title">接入总览与流程</h2>
+        <p class="lead" data-i18n="dev.overview.lead">开放平台提供两条互补路径：只要 C 端入口与跳转的走轻量层，需要 IM 账号登录与用户同步的走重量层 OAuth 接入。两条路径独立启用，可以叠加。</p>
+
+        <h3 data-i18n="dev.path.title">两条接入路径</h3>
+        <table>
+          <thead><tr><th data-i18n="dev.path.col1">路径</th><th data-i18n="dev.path.col2">适用场景</th><th data-i18n="dev.path.col3">需要账号互通</th><th data-i18n="dev.path.col4">说明</th></tr></thead>
+          <tbody>
+            <tr><td data-i18n="dev.path.a1">A. 服务板块服务项（轻量）</td><td data-i18n="dev.path.a2">只需在 IM 的 C 端「服务板块」有入口、能跳转</td><td data-i18n="dev.path.a3">否</td><td data-i18n="dev.path.a4">见本页「服务板块接入（轻量层）」</td></tr>
+            <tr><td data-i18n="dev.path.b1">B. 开放平台 OAuth（重量）</td><td data-i18n="dev.path.b2">要用 IM 账号登录你的系统、同步昵称 / 头像 / 手机号，后续做消息触达</td><td data-i18n="dev.path.b3">是</td><td data-i18n="dev.path.b4">本页其余章节</td></tr>
+          </tbody>
+        </table>
+
+        <h3 data-i18n="dev.flow.title">标准接入流程（5 步）</h3>
+        <div class="steps">
+          <div class="step"><span class="n">1</span><h3 data-i18n="dev.flow.1.t">应用申请</h3><p data-i18n="dev.flow.1.d">准备主体、应用名、HTTPS 回调地址与最小 scope，调用 POST /open/applications 提交，拿到 appId（状态 PENDING）。</p></div>
+          <div class="step"><span class="n">2</span><h3 data-i18n="dev.flow.2.t">平台审核</h3><p data-i18n="dev.flow.2.d">平台运营在 IM 管理后台「第三方接入」页通过或驳回；通过后交付 appId / appSecret（仅一次）。</p></div>
+          <div class="step"><span class="n">3</span><h3 data-i18n="dev.flow.3.t">用户授权</h3><p data-i18n="dev.flow.3.d">前台：跳转 /oauth/authorize（PKCE S256 + state），用户同意后回调拿到一次性 code。</p></div>
+          <div class="step"><span class="n">4</span><h3 data-i18n="dev.flow.4.t">后台换证</h3><p data-i18n="dev.flow.4.d">你的服务端用 code + code_verifier 换 token、取 userinfo、建 / 绑账号——appSecret 只在这里使用。</p></div>
+          <div class="step"><span class="n">5</span><h3 data-i18n="dev.flow.5.t">用户同步与业务打通</h3><p data-i18n="dev.flow.5.d">授权范围内按契约订阅同步；第三方业务独立闭环，最后按自测 / 验收清单验证。</p></div>
+        </div>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.flow.note1">全程只有第 3 步（平台审批）需要平台侧介入，其余都可自助完成。</li>
+            <li data-i18n="dev.flow.note2">appSecret 只在审批通过或重置密钥时返回一次，且只能保存在你的服务端，H5 / App / 小程序不得持有。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="apply">
+      <div class="wrap">
+        <h2 data-i18n="dev.apply.title">申请与审批：提交什么 · 谁审 · 多久 · 通过后拿到什么</h2>
+        <p class="lead" data-i18n="dev.apply.lead">应用注册不等于授权。提交申请只产生一条待审记录，必须经平台审批通过才会发放密钥。</p>
+
+        <h3 data-i18n="dev.apply.mat.title">一、提交什么（材料清单）</h3>
+        <table>
+          <thead><tr><th data-i18n="dev.apply.mat.col1">材料</th><th data-i18n="dev.apply.mat.col2">要求</th></tr></thead>
+          <tbody>
+            <tr><td><code>appName</code></td><td data-i18n="dev.apply.mat.r1">应用名称（必填）：会展示在用户授权页，请用真实业务名，不要使用「测试」「demo」等占位名。</td></tr>
+            <tr><td><code>subjectName</code></td><td data-i18n="dev.apply.mat.r2">接入主体（企业 / 组织名，审核用），需与商务主体一致。</td></tr>
+            <tr><td><code>appType</code></td><td data-i18n="dev.apply.mat.r3">第三方填 THIRD_PARTY；FIRST_PARTY 仅平台自用。</td></tr>
+            <tr><td><code>callbackUrl</code></td><td data-i18n="dev.apply.mat.r4">HTTPS 回调地址：无 fragment（#）、生产域名；与线上实际页面逐字符一致（含尾斜杠）。</td></tr>
+            <tr><td><code>scopes</code></td><td data-i18n="dev.apply.mat.r5">最小授权，从下方 scope 清单中选择；申请 profile.phone 需说明用途，notify 当前不开放。</td></tr>
+            <tr><td data-i18n="dev.apply.mat.r6k">联系方式</td><td data-i18n="dev.apply.mat.r6">技术对接人 + 邮箱 / 手机，便于审核有疑问时联系。</td></tr>
+          </tbody>
+        </table>
+
+        <h3 data-i18n="dev.apply.send.title">二、怎么提交、怎么跟踪</h3>
+        <pre><code>POST {IM_BASE}/open/applications
+Content-Type: application/json
+
+{
+  "appName": "A380 智慧门店",
+  "subjectName": "深圳某某科技有限公司",
+  "appType": "THIRD_PARTY",
+  "callbackUrl": "https://miniservice.example.com/a380/",
+  "scopes": ["profile.basic"]
+}
+
+# 响应（不含密钥，此时为 PENDING）
+{ "appId": "app_3f7c9a21", "appName": "A380 智慧门店", "status": "PENDING", "appSecret": null }
+
+# 轮询审核状态
+GET {IM_BASE}/open/applications/{appId}
+{ "appId": "app_3f7c9a21", "status": "PENDING", "rejectReason": null, "scopes": ["profile.basic"], "callbackUrl": "https://miniservice.example.com/a380/" }</code></pre>
+        <div class="panel">
+          <p data-i18n="dev.apply.base">{IM_BASE} 为平台交付的网关域名（文档示例：https://api.example.com），本地联调可换成联调网关地址。网关已直通路由：/open/**、/oauth/**、/.well-known/openid-configuration，路径不带 /api。</p>
+        </div>
+
+        <h3 data-i18n="dev.apply.status.title">三、状态含义与状态机</h3>
+        <table>
+          <thead><tr><th data-i18n="dev.apply.status.col1">status</th><th data-i18n="dev.apply.status.col2">含义</th><th data-i18n="dev.apply.status.col3">你该做什么</th></tr></thead>
+          <tbody>
+            <tr><td><code>PENDING</code></td><td data-i18n="dev.apply.status.p1">待审核</td><td data-i18n="dev.apply.status.p2">等待平台审核，期间不要引导用户去授权</td></tr>
+            <tr><td><code>APPROVED</code></td><td data-i18n="dev.apply.status.a1">已通过</td><td data-i18n="dev.apply.status.a2">从平台获取 appSecret（仅一次），开始联调</td></tr>
+            <tr><td><code>REJECTED</code></td><td data-i18n="dev.apply.status.r1">已驳回</td><td data-i18n="dev.apply.status.r2">查看 rejectReason，修正材料后重新提交申请</td></tr>
+            <tr><td><code>SUSPENDED</code></td><td data-i18n="dev.apply.status.s1">已吊销</td><td data-i18n="dev.apply.status.s2">停止调用，联系平台运营</td></tr>
+          </tbody>
+        </table>
+        <pre><code>（第三方提交申请）
+        │
+        ▼
+     PENDING ──通过──▶ APPROVED ──吊销──▶ SUSPENDED
+        │                  ▲                  │
+        └──驳回──▶ REJECTED │                  │
+                    │       └── 重新提交申请 ───┘
+                    └─ 修正材料后重新 POST /open/applications</code></pre>
+
+        <h3 data-i18n="dev.apply.who.title">四、谁审、怎么审、多久</h3>
+        <table>
+          <thead><tr><th data-i18n="dev.apply.who.col1">环节</th><th data-i18n="dev.apply.who.col2">责任方</th><th data-i18n="dev.apply.who.col3">建议时效</th></tr></thead>
+          <tbody>
+            <tr><td data-i18n="dev.apply.who.r1">材料齐全性初判</td><td data-i18n="dev.apply.who.r1o">平台商务 / 对接人</td><td data-i18n="dev.apply.who.r1t">1 个工作日</td></tr>
+            <tr><td data-i18n="dev.apply.who.r2">技术项审核（回调地址、scope 最小化）</td><td data-i18n="dev.apply.who.r2o">平台运营 / 研发</td><td data-i18n="dev.apply.who.r2t">1 个工作日</td></tr>
+            <tr><td data-i18n="dev.apply.who.r3">通过后交付密钥</td><td data-i18n="dev.apply.who.r3o">平台运营</td><td data-i18n="dev.apply.who.r3t">审核通过后当天</td></tr>
+            <tr><td data-i18n="dev.apply.who.r4">联调支持</td><td data-i18n="dev.apply.who.r4o">双方研发</td><td data-i18n="dev.apply.who.r4t">按项目排期</td></tr>
+          </tbody>
+        </table>
+        <div class="panel">
+          <p data-i18n="dev.apply.who.desc1">审核在 IM 管理后台「第三方接入」页完成：筛选「第三方 + 待审核」，逐项核对主体、回调地址与 scope，然后「通过」或「驳回」。第三方无权调用审核接口。</p>
+          <p data-i18n="dev.apply.who.desc2">逐项判定标准：主体真实且有商务关系；回调地址为 HTTPS 生产域名、无 #、与业务页面一致；scope 只申请必要项；应用名为用户可理解的业务名；appType 正确；同一主体不重复申请。</p>
+          <p data-i18n="dev.apply.who.desc3">被驳回时会给出可直接执行的 rejectReason（例如「回调地址需为 HTTPS 生产域名且与线上页面一致」），按原因修正后重新提交即可，同一主体可再次申请。</p>
+        </div>
+
+        <h3 data-i18n="dev.apply.secret.title">五、审批通过后拿到什么（密钥交付规则）</h3>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.apply.secret.l1">拿到 appId 与批准信息（应用名、主体、回调地址、批准的 scope）。</li>
+            <li data-i18n="dev.apply.secret.l2">appSecret 只在「通过」或「重置密钥」的响应里出现一次，平台不提供二次查看。</li>
+            <li data-i18n="dev.apply.secret.l3">平台通过安全渠道交付（密码管理器 / 加密消息），不要用普通聊天工具明文发送或截图。</li>
+            <li data-i18n="dev.apply.secret.l4">appSecret 只能放在你的服务端密钥管理里；客户端（H5 / App / 小程序）不得持有。</li>
+            <li data-i18n="dev.apply.secret.l5">怀疑泄露时请平台「重置密钥」，旧密钥立即失效；平台只保存不可逆哈希。</li>
+          </ul>
+        </div>
+
+        <h3 data-i18n="dev.apply.chg.title">六、变更、重置与吊销</h3>
+        <table>
+          <thead><tr><th data-i18n="dev.apply.chg.col1">场景</th><th data-i18n="dev.apply.chg.col2">动作</th><th data-i18n="dev.apply.chg.col3">影响</th></tr></thead>
+          <tbody>
+            <tr><td data-i18n="dev.apply.chg.r1">更换回调地址 / 增加 scope</td><td data-i18n="dev.apply.chg.r2">当前没有公开的自助修改端点，由平台按变更流程处理（必要时驳回后重新申请）</td><td data-i18n="dev.apply.chg.r3">变更前旧配置继续生效</td></tr>
+            <tr><td data-i18n="dev.apply.chg.r4">密钥疑似泄露</td><td data-i18n="dev.apply.chg.r5">平台「重置密钥」</td><td data-i18n="dev.apply.chg.r6">旧密钥立即失效，你需更新服务端配置</td></tr>
+            <tr><td data-i18n="dev.apply.chg.r7">合作终止 / 违规</td><td data-i18n="dev.apply.chg.r8">平台「吊销」</td><td data-i18n="dev.apply.chg.r9">状态 SUSPENDED，该应用全部 token 与授权失效；你的业务数据保留</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="front-back">
+      <div class="wrap">
+        <h2 data-i18n="dev.fb.title">前后台两段接入的差异（最容易搞错的地方）</h2>
+        <p class="lead" data-i18n="dev.fb.lead">接入被拆成两段：前台「用户在场，只拿 code」，后台「服务端对服务端，持有密钥、换 token、取资料」。混用这两段是接入失败的主要原因。</p>
+        <table>
+          <thead><tr><th data-i18n="dev.fb.dim">维度</th><th data-i18n="dev.fb.front">前台 / Front channel</th><th data-i18n="dev.fb.back">后台 / Back channel</th></tr></thead>
+          <tbody>
+            <tr><td data-i18n="dev.fb.r1k">运行位置</td><td data-i18n="dev.fb.r1f">浏览器 / WebView / App</td><td data-i18n="dev.fb.r1b">你的服务端</td></tr>
+            <tr><td data-i18n="dev.fb.r2k">用户是否在场</td><td data-i18n="dev.fb.r2f">在（要点「同意」）</td><td data-i18n="dev.fb.r2b">不在（静默调用）</td></tr>
+            <tr><td data-i18n="dev.fb.r3k">是否持有 appSecret</td><td data-i18n="dev.fb.r3f">绝不</td><td data-i18n="dev.fb.r3b">只在这里</td></tr>
+            <tr><td data-i18n="dev.fb.r4k">用到哪些接口</td><td data-i18n="dev.fb.r4f">GET /oauth/authorize、GET /oauth/consent（同意页）</td><td data-i18n="dev.fb.r4b">POST /oauth/token、GET /oauth/userinfo、POST /oauth/revoke、GET /.well-known/openid-configuration</td></tr>
+            <tr><td data-i18n="dev.fb.r5k">关键参数</td><td data-i18n="dev.fb.r5f">appId、redirect_uri、scope、state、code_challenge + code_challenge_method=S256、nonce</td><td data-i18n="dev.fb.r5b">grant_type=authorization_code、code、redirect_uri、app_id、code_verifier；userinfo 用 Authorization: Bearer &lt;access_token&gt;</td></tr>
+            <tr><td data-i18n="dev.fb.r6k">输入 / 输出</td><td data-i18n="dev.fb.r6f">输入 appId + scope + redirect_uri + PKCE challenge；输出一次性 code（+ state）</td><td data-i18n="dev.fb.r6b">输入 code + code_verifier + app_id；输出 access_token / refresh_token / open_id / id_token</td></tr>
+            <tr><td data-i18n="dev.fb.r7k">能否取用户资料</td><td data-i18n="dev.fb.r7f">否</td><td data-i18n="dev.fb.r7b">是（GET /oauth/userinfo）</td></tr>
+            <tr><td data-i18n="dev.fb.r8k">失败重试</td><td data-i18n="dev.fb.r8f">重新跳授权（幂等）</td><td data-i18n="dev.fb.r8b">code 不可重放；token 过期用 refresh_token 续期</td></tr>
+            <tr><td data-i18n="dev.fb.r9k">常见错误</td><td data-i18n="dev.fb.r9f">redirect_uri 不精确匹配、缺 state、把密钥写进前端</td><td data-i18n="dev.fb.r9b">用错 code_verifier、重复使用 code、漏校验 state</td></tr>
+          </tbody>
+        </table>
+
+        <h3 data-i18n="dev.fb.who.title">职责边界：IM 平台侧 vs 你的后台</h3>
+        <table>
+          <thead><tr><th data-i18n="dev.fb.who.col1">环节</th><th data-i18n="dev.fb.who.col2">谁做</th><th data-i18n="dev.fb.who.col3">在哪做</th><th data-i18n="dev.fb.who.col4">用到什么</th></tr></thead>
+          <tbody>
+            <tr><td data-i18n="dev.fb.w1">提交接入申请</td><td data-i18n="dev.fb.w1o">你（可脚本化）</td><td data-i18n="dev.fb.w1w">你的服务端 / 工具</td><td><code>POST /open/applications</code></td></tr>
+            <tr><td data-i18n="dev.fb.w2">申请审核与密钥交付</td><td data-i18n="dev.fb.w2o">IM 平台运营</td><td data-i18n="dev.fb.w2w">IM 管理后台「第三方接入」页</td><td data-i18n="dev.fb.w2t">平台内部审核动作（第三方无权调用），通过后交付 appId / appSecret</td></tr>
+            <tr><td data-i18n="dev.fb.w3">前台授权</td><td data-i18n="dev.fb.w3o">你的客户端</td><td data-i18n="dev.fb.w3w">用户浏览器 / IM App 内 WebView</td><td><code>GET /oauth/authorize</code></td></tr>
+            <tr><td data-i18n="dev.fb.w4">后台换证与取资料</td><td data-i18n="dev.fb.w4o">你的服务端</td><td data-i18n="dev.fb.w4w">你的 BFF / 身份服务</td><td><code>POST /oauth/token</code>、<code>GET /oauth/userinfo</code></td></tr>
+            <tr><td data-i18n="dev.fb.w5">撤销</td><td data-i18n="dev.fb.w5o">你 / 用户 / 平台</td><td data-i18n="dev.fb.w5w">你的服务端 / IM 客户端 / IM 管理后台</td><td><code>POST /oauth/revoke</code>、<code>POST /oauth/user/revoke</code>、平台吊销</td></tr>
+          </tbody>
+        </table>
+
+        <h3 data-i18n="dev.fb.param.title">参数速查</h3>
+        <table>
+          <thead><tr><th data-i18n="dev.fb.param.col1">参数</th><th data-i18n="dev.fb.param.col2">所属</th><th data-i18n="dev.fb.param.col3">说明</th></tr></thead>
+          <tbody>
+            <tr><td><code>appId</code></td><td data-i18n="dev.fb.p1w">前台</td><td data-i18n="dev.fb.p1">审核通过的应用标识；使用标准 OIDC 客户端库时，其 client_id 与本平台 appId 对应。</td></tr>
+            <tr><td><code>redirect_uri</code></td><td data-i18n="dev.fb.p2w">前台 + 后台</td><td data-i18n="dev.fb.p2">与登记的 callbackUrl 逐字符一致（含尾斜杠、端口、大小写）。</td></tr>
+            <tr><td><code>scope</code></td><td data-i18n="dev.fb.p3w">前台 + 后台</td><td data-i18n="dev.fb.p3">只能是你被批准的 scope；后台响应会回显实际授权范围。</td></tr>
+            <tr><td><code>state</code></td><td data-i18n="dev.fb.p4w">前台发起、后台校验</td><td data-i18n="dev.fb.p4">随机串防 CSRF，回调原样带回；不匹配必须丢弃。</td></tr>
+            <tr><td><code>code_challenge</code> / <code>code_challenge_method</code></td><td data-i18n="dev.fb.p5w">前台</td><td data-i18n="dev.fb.p5">PKCE，仅支持 S256；challenge = BASE64URL(SHA256(code_verifier))，无填充。</td></tr>
+            <tr><td><code>nonce</code></td><td data-i18n="dev.fb.p6w">前台（推荐）</td><td data-i18n="dev.fb.p6">OIDC id_token 防重放。</td></tr>
+            <tr><td><code>code</code></td><td data-i18n="dev.fb.p7w">前台产出、后台消费</td><td data-i18n="dev.fb.p7">一次性授权码，短期有效；只在回调 URL 上出现，重复使用必须被拒绝。</td></tr>
+            <tr><td><code>code_verifier</code></td><td data-i18n="dev.fb.p8w">后台</td><td data-i18n="dev.fb.p8">PKCE 原始随机串（43–128 字符），自己留好，只在换 token 时提交。</td></tr>
+            <tr><td><code>open_id</code></td><td data-i18n="dev.fb.p9w">后台返回</td><td data-i18n="dev.fb.p9">IM 用户在你的应用下的稳定唯一标识，请用它作为账号绑定键。</td></tr>
+            <tr><td><code>access_token</code> / <code>refresh_token</code> / <code>expires_in</code></td><td data-i18n="dev.fb.p10w">后台返回</td><td data-i18n="dev.fb.p10">令牌为不透明字符串，有效期 7200 秒；过期用 refresh_token 续期。</td></tr>
+            <tr><td><code>appSecret</code></td><td data-i18n="dev.fb.p11w">仅后台</td><td data-i18n="dev.fb.p11">服务端请求凭据（如 HTTP Basic 或服务端参数），任何情况下都不进入 H5 / App。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="a380">
+      <div class="wrap">
+        <h2 data-i18n="dev.a380.title">A380 完整接入示例（端到端）</h2>
+        <p class="lead" data-i18n="dev.a380.lead">A380 智慧门店（SaaS 平台）是开放平台的第一个第三方接入方：前台是运行在 IM 客户端内的 H5，后台是 A380 的身份服务。下面这条链路已在真实环境跑通，可作为你的接入参考。</p>
+
+        <h3 data-i18n="dev.a380.info.title">1. 申请与审批</h3>
+        <table>
+          <thead><tr><th data-i18n="dev.a380.info.col1">项</th><th data-i18n="dev.a380.info.col2">值</th></tr></thead>
+          <tbody>
+            <tr><td data-i18n="dev.a380.i1k">应用</td><td data-i18n="dev.a380.i1">A380 智慧门店（appType = THIRD_PARTY）</td></tr>
+            <tr><td data-i18n="dev.a380.i2k">appId</td><td><code>app_3f7c9a21</code></td></tr>
+            <tr><td data-i18n="dev.a380.i3k">回调地址</td><td><code>https://miniservice.example.com/a380/</code><span data-i18n="dev.a380.i3">（HTTPS，与线上 H5 页面逐字符一致，含尾斜杠）</span></td></tr>
+            <tr><td data-i18n="dev.a380.i4k">scope</td><td><code>profile.basic</code><span data-i18n="dev.a380.i4">（仅昵称 / 头像，够用就不多要）</span></td></tr>
+            <tr><td data-i18n="dev.a380.i5k">审批</td><td data-i18n="dev.a380.i5">IM 管理后台「第三方接入」页通过 → 平台通过安全渠道把 appId / appSecret 交付给 A380 服务端</td></tr>
+          </tbody>
+        </table>
+        <pre><code># 1) 提交申请（拿到 appId，状态 PENDING）
+POST {IM_BASE}/open/applications
+{
+  "appName": "A380 智慧门店",
+  "subjectName": "深圳某某科技有限公司",
+  "appType": "THIRD_PARTY",
+  "callbackUrl": "https://miniservice.example.com/a380/",
+  "scopes": ["profile.basic"]
+}
+# → { "appId": "app_3f7c9a21", "status": "PENDING", "appSecret": null }
+
+# 2) 轮询状态，直到 APPROVED
+GET {IM_BASE}/open/applications/app_3f7c9a21
+# → { "appId": "app_3f7c9a21", "status": "APPROVED", "rejectReason": null, "scopes": ["profile.basic"], "callbackUrl": "https://miniservice.example.com/a380/" }</code></pre>
+
+        <h3 data-i18n="dev.a380.s1.title">2. 前台：H5 拿 code</h3>
+        <p data-i18n="dev.a380.s1.desc">H5 通过容器原生桥（见下方「H5 内嵌 WebView 授权」）或直接跳转授权地址，用 PKCE S256 + state 拿到一次性 code。</p>
+        <pre><code>GET {IM_BASE}/oauth/authorize
+  ?appId=app_3f7c9a21
+  &amp;redirect_uri=https%3A%2F%2Fminiservice.example.com%2Fa380%2F
+  &amp;scope=profile.basic
+  &amp;state=STATE_RANDOM
+  &amp;code_challenge=CODE_CHALLENGE_S256
+  &amp;code_challenge_method=S256
+  &amp;nonce=NONCE_OPTIONAL
+
+# 用户同意后 302 回：
+#   https://miniservice.example.com/a380/?code=AUTH_CODE&amp;state=STATE_RANDOM
+# 用户拒绝：
+#   https://miniservice.example.com/a380/?error=access_denied&amp;state=STATE_RANDOM</code></pre>
+
+        <h3 data-i18n="dev.a380.s3.title">3. 后台：换 token（IM 侧）</h3>
+        <p data-i18n="dev.a380.s3.desc">A380 服务端校验 state 后，用 code + code_verifier 调 IM 换 token，并用 open_id 作为自己系统里的绑定键。</p>
+        <pre><code>POST {IM_BASE}/oauth/token
+Content-Type: application/x-www-form-urlencoded      # 也支持 application/json
+
+grant_type=authorization_code
+&amp;code=AUTH_CODE
+&amp;redirect_uri=https%3A%2F%2Fminiservice.example.com%2Fa380%2F
+&amp;app_id=app_3f7c9a21
+&amp;code_verifier=CODE_VERIFIER
+
+# 响应
+{
+  "access_token": "...", "refresh_token": "...", "expires_in": 7200,
+  "open_id": "op_9c1f...", "scope": "profile.basic",
+  "id_token": "eyJ...", "token_type": "Bearer"
+}</code></pre>
+
+        <h3 data-i18n="dev.a380.s4.title">4. 后台：A380 身份服务的授权码回调（A380 侧实现）</h3>
+        <pre><code>POST /api/v1/identity/oauth/im/callback
+Content-Type: application/json
+
+{
+  "code": "AUTH_CODE",
+  "code_verifier": "CODE_VERIFIER",
+  "redirect_uri": "https://miniservice.example.com/a380/",
+  "app_id": "app_3f7c9a21",
+  "state": "STATE_RANDOM",
+  "nonce": "NONCE_OPTIONAL"
+}</code></pre>
+        <div class="panel">
+          <p data-i18n="dev.a380.beh.title">服务端行为（真实实现）：</p>
+          <ol>
+            <li data-i18n="dev.a380.beh.l1">校验 state；</li>
+            <li data-i18n="dev.a380.beh.l2">用 code + code_verifier 调 IM 的 POST /oauth/token；</li>
+            <li data-i18n="dev.a380.beh.l3">按 open_id 建立 / 绑定 A380 账号；</li>
+            <li data-i18n="dev.a380.beh.l4">种 HttpOnly 会话 Cookie 并把 authenticated=true 返回给 H5，之后业务请求只带这个会话，不再每次问 IM。</li>
+          </ol>
+          <p data-i18n="dev.a380.note">A380 的 C 端与 B 端使用不同 appId 区分，会话 Cookie 也分两套。旧版「直传 im_access_token」的绑定入口已停用（返回 410 LEGACY_BIND_DISABLED），新接入请统一使用授权码回调。</p>
+        </div>
+
+        <h3 data-i18n="dev.a380.s5.title">5. 后台：取用户资料</h3>
+        <pre><code>GET {IM_BASE}/oauth/userinfo
+Authorization: Bearer ACCESS_TOKEN
+
+# 响应（只返回授权范围内的字段；phone 已脱敏）
+{
+  "open_id": "op_9c1f...",
+  "nickname": "张三",
+  "avatar": "https://cdn.example.com/avatar/10086.png",
+  "phone": "138****5678"
+}</code></pre>
+
+        <h3 data-i18n="dev.a380.res.title">6. 验收时的表现</h3>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.a380.res.l1">用户从 IM 进入门店 H5 → 授权一次 → 门店内已完成登录，无需在门店侧再注册 / 登录。</li>
+            <li data-i18n="dev.a380.res.l2">用户在 IM 侧解除授权后：门店业务数据仍在，门店登录态失效，需重新授权。</li>
+            <li data-i18n="dev.a380.res.l3">IM 不可用时，门店已有登录态的用户仍能继续使用门店业务。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="appinfo">
+      <div class="wrap">
+        <h2 data-i18n="dev.appinfo.title">应用信息</h2>
+        <table>
+          <thead><tr><th data-i18n="dev.appinfo.field">字段</th><th data-i18n="dev.api.desc">说明</th></tr></thead>
+          <tbody>
+            <tr><td><code>appId</code></td><td data-i18n="dev.appinfo.appId">平台审核通过后发放的唯一应用标识</td></tr>
+            <tr><td><code>appName</code></td><td data-i18n="dev.appinfo.appName">应用名称（用户会在授权页看到）</td></tr>
+            <tr><td><code>subjectName</code></td><td data-i18n="dev.appinfo.subjectName">接入主体（企业 / 组织名）</td></tr>
+            <tr><td><code>appType</code></td><td data-i18n="dev.appinfo.appType">THIRD_PARTY（第三方）/ FIRST_PARTY（平台自用）</td></tr>
+            <tr><td><code>callbackUrl</code></td><td data-i18n="dev.appinfo.callbackUrl">OAuth 回调地址（HTTPS，与 redirect_uri 逐字符一致）</td></tr>
+            <tr><td><code>scopes</code></td><td data-i18n="dev.appinfo.scope">申请的授权范围（最小授权）</td></tr>
+            <tr><td><code>status</code></td><td data-i18n="dev.appinfo.status">PENDING / APPROVED / REJECTED / SUSPENDED</td></tr>
+            <tr><td><code>rejectReason</code></td><td data-i18n="dev.appinfo.rejectReason">驳回原因（仅 REJECTED 时有值，可据此修正后重新申请）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="oauth-flow">
+      <div class="wrap">
+        <h2 data-i18n="dev.oauth.title">授权流程</h2>
+        <p data-i18n="dev.oauth.subtitle">OAuth 2.0 Authorization Code + PKCE（OIDC）：</p>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.oauth.l1">客户端注册：公开客户端（H5 / App / WebView）使用 PKCE，不携带 secret；confidential 服务端的 appSecret 只留在服务端。</li>
+            <li data-i18n="dev.oauth.l2">用户级授权：第三方引导用户授权指定 scope，用户可随时在 IM 侧撤销。</li>
+          </ul>
+        </div>
+        <h3 class="seq-title" data-i18n="dev.oauth.seq">时序</h3>
+        <ol class="seq">
+          <li>
+            <div class="seq-hop"><span class="seq-n">1</span><span class="seq-actor app" data-i18n="dev.seq.actor.app">第三方 App</span><span class="seq-arr">→</span><span class="seq-actor im" data-i18n="dev.seq.actor.im">IM</span></div>
+            <div class="seq-msg" data-i18n="dev.seq.1">GET /oauth/authorize?appId&amp;scope&amp;redirect_uri&amp;state&amp;nonce&amp;code_challenge&amp;code_challenge_method=S256</div>
+          </li>
+          <li>
+            <div class="seq-hop"><span class="seq-n">2</span><span class="seq-actor im" data-i18n="dev.seq.actor.im">IM</span><span class="seq-arr">→</span><span class="seq-actor user" data-i18n="dev.seq.actor.user">用户</span></div>
+            <div class="seq-msg" data-i18n="dev.seq.2">跳转用户同意页 /oauth/consent（展示应用名 + scope 中文说明）</div>
+          </li>
+          <li>
+            <div class="seq-hop"><span class="seq-n">3</span><span class="seq-actor user" data-i18n="dev.seq.actor.user">用户</span><span class="seq-arr">→</span><span class="seq-actor im" data-i18n="dev.seq.actor.im">IM</span></div>
+            <div class="seq-msg" data-i18n="dev.seq.3">用户同意，302 回 redirect_uri?code=...&amp;state=...（拒绝则 error=access_denied）</div>
+          </li>
+          <li>
+            <div class="seq-hop"><span class="seq-n">4</span><span class="seq-actor app" data-i18n="dev.seq.actor.app">第三方 App</span><span class="seq-arr">→</span><span class="seq-actor im" data-i18n="dev.seq.actor.im">IM</span></div>
+            <div class="seq-msg" data-i18n="dev.seq.4">POST /oauth/token（code + PKCE verifier + app_id）</div>
+          </li>
+          <li>
+            <div class="seq-hop"><span class="seq-n">5</span><span class="seq-actor im" data-i18n="dev.seq.actor.im">IM</span><span class="seq-arr">→</span><span class="seq-actor app" data-i18n="dev.seq.actor.app">第三方 App</span></div>
+            <div class="seq-msg" data-i18n="dev.seq.5">返回 access_token / refresh_token / expires_in / open_id / id_token</div>
+          </li>
+          <li>
+            <div class="seq-hop"><span class="seq-n">6</span><span class="seq-actor app" data-i18n="dev.seq.actor.app">第三方 App</span><span class="seq-arr">→</span><span class="seq-actor im" data-i18n="dev.seq.actor.im">IM</span></div>
+            <div class="seq-msg" data-i18n="dev.seq.6">GET /oauth/userinfo（Authorization: Bearer access_token）</div>
+          </li>
+        </ol>
+        <h3 data-i18n="dev.oauth.rules.title">前台红线</h3>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.oauth.rules.l1">绝不把 appSecret 放在前台代码里（WebView / H5 / App 都是 public client）。</li>
+            <li data-i18n="dev.oauth.rules.l2">state 必须校验；code 只能用一次；回调只认与登记值逐字符一致的 redirect_uri。</li>
+            <li data-i18n="dev.oauth.rules.l3">授权失败或用户拒绝要有明确页面提示，不要停在空白回调页。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="webview">
+      <div class="wrap">
+        <h2 data-i18n="dev.webview.title">H5 内嵌 WebView 授权（原生桥 · 小程序模型）</h2>
+        <p class="lead" data-i18n="dev.webview.lead">第三方业务以 H5 页面内嵌在 IM App WebView 中运行时（本地生活 / KTV / 酒店 / 打车等小程序），通过容器注入的原生桥完成「IM 用户 → 第三方用户」授权登录，对齐小程序模型：H5 调桥拿 code，你的服务端换 token 并建立自己的会话。</p>
+
+        <h3 class="seq-title" data-i18n="dev.webview.seq">时序</h3>
+        <ol class="seq">
+          <li>
+            <div class="seq-hop"><span class="seq-n">1</span><span class="seq-actor im" data-i18n="dev.webview.actor.container">IM App（容器）</span><span class="seq-arr">→</span><span class="seq-actor app" data-i18n="dev.webview.actor.webview">WebView</span></div>
+            <div class="seq-msg" data-i18n="dev.webview.s1">注入 window.GVBridge.login({ appId, scope, redirectUri })</div>
+          </li>
+          <li>
+            <div class="seq-hop"><span class="seq-n">2</span><span class="seq-actor app" data-i18n="dev.webview.actor.h5">第三方 H5</span><span class="seq-arr">→</span><span class="seq-actor im" data-i18n="dev.webview.actor.imapp">IM App</span></div>
+            <div class="seq-msg" data-i18n="dev.webview.s2">GVBridge.login()：App 原生用自己的登录态走 /oauth/authorize 拿 code</div>
+          </li>
+          <li>
+            <div class="seq-hop"><span class="seq-n">3</span><span class="seq-actor im" data-i18n="dev.webview.actor.imapp">IM App</span><span class="seq-arr">→</span><span class="seq-actor app" data-i18n="dev.webview.actor.h5">第三方 H5</span></div>
+            <div class="seq-msg" data-i18n="dev.webview.s3">返回 { code, code_verifier, redirect_uri }</div>
+          </li>
+          <li>
+            <div class="seq-hop"><span class="seq-n">4</span><span class="seq-actor app" data-i18n="dev.webview.actor.h5">第三方 H5</span><span class="seq-arr">→</span><span class="seq-actor im" data-i18n="dev.webview.actor.backend">第三方后端</span></div>
+            <div class="seq-msg" data-i18n="dev.webview.s4">POST 你的服务端授权码回调接口（body: code + code_verifier + redirect_uri）</div>
+          </li>
+          <li>
+            <div class="seq-hop"><span class="seq-n">5</span><span class="seq-actor im" data-i18n="dev.webview.actor.backend">第三方后端</span><span class="seq-arr">→</span><span class="seq-actor app" data-i18n="dev.webview.actor.h5">第三方 H5</span></div>
+            <div class="seq-msg" data-i18n="dev.webview.s5">换 token + 建 / 绑账号 → 下发 HttpOnly 会话 Cookie（H5 不保存 JWT）</div>
+          </li>
+        </ol>
+
+        <h3 data-i18n="dev.webview.keypoints">关键点</h3>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.webview.k1">IM 的用户登录态不出 App：App 原生只在桥内用它拿 code，不进入 H5 的 JS、不进 URL。</li>
+            <li data-i18n="dev.webview.k2">code 一次性、短期有效；回调成功后由你的服务端通过 HttpOnly Cookie 保存会话，H5 不保存 JWT。</li>
+            <li data-i18n="dev.webview.k3">登录态有效性：业务请求使用你自己的会话；会话过期、撤销或应用切换时重新 GVBridge.login()，不必每次请求 IM。</li>
+            <li data-i18n="dev.webview.k4">redirectUri 为 H5 自身 URL，须与开放平台登记的 callbackUrl 精确一致（含尾斜杠）。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="api">
+      <div class="wrap">
+        <h2 data-i18n="dev.api.title">标准接口清单</h2>
+        <table>
+          <thead><tr><th data-i18n="dev.api.method">方法与路径</th><th data-i18n="dev.api.desc">说明</th></tr></thead>
+          <tbody>
+            <tr><td><code>POST /open/applications</code></td><td data-i18n="dev.api.r1">提交应用接入申请（返回 appId，状态 PENDING，不含密钥）</td></tr>
+            <tr><td><code>GET /open/applications/{appId}</code></td><td data-i18n="dev.api.r2">查询审核状态与驳回原因（轮询）</td></tr>
+            <tr><td><code>GET /oauth/authorize</code></td><td data-i18n="dev.api.r4">前台授权入口（Authorization Code + PKCE S256）</td></tr>
+            <tr><td><code>GET /oauth/consent</code></td><td data-i18n="dev.api.r8">用户同意页（短期 request_id）</td></tr>
+            <tr><td><code>POST /oauth/token</code></td><td data-i18n="dev.api.r5">后台：code 换 access_token / refresh_token / open_id / id_token</td></tr>
+            <tr><td><code>GET /oauth/userinfo</code></td><td data-i18n="dev.api.r6">后台：授权范围内用户资料（Bearer access_token）</td></tr>
+            <tr><td><code>POST /oauth/revoke</code></td><td data-i18n="dev.api.r9">后台：撤销单个 token（?token=access_token）</td></tr>
+            <tr><td><code>POST /oauth/user/revoke</code></td><td data-i18n="dev.api.r10">用户在 IM 侧解除对你的授权（?appId=appId，由 IM 侧入口触发）</td></tr>
+            <tr><td><code>GET /.well-known/openid-configuration</code></td><td data-i18n="dev.api.r11">OIDC 发现：authorization / token / userinfo endpoint 与 jwks_uri，便于使用标准 OIDC 客户端库</td></tr>
+          </tbody>
+        </table>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.api.note1">审核通过 / 驳回 / 重置密钥 / 吊销由平台在 IM 管理后台完成，第三方无权调用审核接口。</li>
+            <li data-i18n="dev.api.note2">PUT /open/applications/{appId} 当前未开放：变更回调地址或 scope 请走平台变更流程。</li>
+            <li data-i18n="dev.api.note3">{IM_BASE} 为平台交付的网关域名（示例 https://api.example.com）；上述路径不带 /api。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="scope">
+      <div class="wrap">
+        <h2 data-i18n="dev.scope.title">scope 说明（最小授权）</h2>
+        <table>
+          <thead><tr><th>scope</th><th data-i18n="dev.scope.desc">说明</th><th data-i18n="dev.scope.status">状态</th></tr></thead>
+          <tbody>
+            <tr><td><code>profile.basic</code></td><td data-i18n="dev.scope.r1">昵称 / 头像</td><td data-i18n="dev.scope.s1">已开放</td></tr>
+            <tr><td><code>profile.phone</code></td><td data-i18n="dev.scope.r2">手机号（脱敏展示），需说明用途</td><td data-i18n="dev.scope.s2">已开放</td></tr>
+            <tr><td><code>notify</code></td><td data-i18n="dev.scope.r3">站内信 / 推送</td><td data-i18n="dev.scope.s3">预留，暂不开放（申请会被驳回）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="sync">
+      <div class="wrap">
+        <h2 data-i18n="dev.sync.title">用户同步</h2>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.sync.l1">拉取（Pull）：GET /oauth/userinfo（授权范围内）。</li>
+            <li data-i18n="dev.sync.l2">订阅（Subscribe）：UserProfileChanged 事件（topic 见 OpenAPI / AsyncAPI 契约）。</li>
+            <li data-i18n="dev.sync.l3">同步内容仅限授权范围（昵称 / 头像 / 手机号脱敏）；不共享 IM 聊天 / 好友 / 群组数据。</li>
+            <li data-i18n="dev.sync.l4">解绑 / 撤销：第三方业务数据保留，仅移除 IM 登录 / 触达方式。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="security">
+      <div class="wrap">
+        <h2 data-i18n="dev.sec.title">安全与数据边界</h2>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.sec.l1">appSecret 以不可逆哈希保存，不落明文、不进日志、不进客户端，只在审核通过或重置时返回一次。</li>
+            <li data-i18n="dev.sec.l2">scope 最小授权，超范围请求会被拒绝；授权 / 撤销 / 解绑立即失效。</li>
+            <li data-i18n="dev.sec.l3">审计：授权 / 撤销 / 同步 / 触达均记审计；日志脱敏（不落 token / 手机号明文）。</li>
+            <li data-i18n="dev.sec.l4">共享范围仅限授权 scope（昵称 / 头像 / 脱敏手机号）；不共享聊天、好友、群组数据。</li>
+            <li data-i18n="dev.sec.l5">解绑 / 撤销后第三方业务数据保留。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="board">
+      <div class="wrap">
+        <h2 data-i18n="dev.board.title">服务板块接入（轻量层 · 小程序服务项）</h2>
+        <p class="lead" data-i18n="dev.board.lead">打车、外卖、电商、本地生活等外部服务，若只需在 C 端「服务板块」展示入口并跳转（无需 OAuth 账号授权），走更轻量的「服务项（小程序）」接入。</p>
+
+        <h3 data-i18n="dev.board.entry.title">C 端入口链路</h3>
+        <div class="panel"><p data-i18n="dev.board.entry.desc">App 头部 A380 板块 → 服务页（服务板块）→ 服务类型分组 → 服务项（小程序），点击跳转小程序 / H5 / 自定义 scheme。</p></div>
+
+        <h3 data-i18n="dev.board.fields.title">服务项字段</h3>
+        <table>
+          <thead><tr><th data-i18n="dev.board.field">字段</th><th data-i18n="dev.board.desc">说明</th></tr></thead>
+          <tbody>
+            <tr><td><code>typeId</code></td><td data-i18n="dev.board.typeId">所属服务类型 id</td></tr>
+            <tr><td><code>name</code></td><td data-i18n="dev.board.name">服务项名称（如「打车」）</td></tr>
+            <tr><td><code>link</code></td><td data-i18n="dev.board.link">跳转地址：小程序路径 / H5 URL / 自定义 scheme</td></tr>
+            <tr><td><code>introduction</code></td><td data-i18n="dev.board.introduction">服务介绍（选填）</td></tr>
+            <tr><td><code>icon</code></td><td data-i18n="dev.board.icon">服务图标（媒体 objectId，选填）</td></tr>
+            <tr><td><code>status</code></td><td data-i18n="dev.board.status">发布状态：1=已发布（C 端可见）/ 0=停用</td></tr>
+            <tr><td><code>isTop</code></td><td data-i18n="dev.board.isTop">是否置顶</td></tr>
+            <tr><td><code>sortOrder</code></td><td data-i18n="dev.board.sortOrder">排序值</td></tr>
+          </tbody>
+        </table>
+
+        <h3 data-i18n="dev.board.api.title">C 端公开读接口</h3>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.board.api.l1">GET /api/v1/miniapp/services：公开接口，只返回已发布（status=true）服务项，按类型分组、置顶优先。</li>
+            <li data-i18n="dev.board.api.l2">启用 / 停用由后台「服务项管理」完成（status 字段），不删除记录。</li>
+          </ul>
+        </div>
+
+        <h3 data-i18n="dev.board.steps.title">打车接入示例</h3>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.board.steps.l1">管理员在后台建 / 复用服务类型，再登记服务项「打车」。</li>
+            <li data-i18n="dev.board.steps.l2">填写 name / link（打车小程序或 H5）/ introduction / icon，status=1 发布。</li>
+            <li data-i18n="dev.board.steps.l3">C 端头部 A380 板块 → 服务页验证入口与跳转。</li>
+            <li data-i18n="dev.board.steps.l4">如需 IM 账号互通 / 用户同步，再叠加上方开放平台 OAuth 接入。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="selftest">
+      <div class="wrap">
+        <h2 data-i18n="dev.selftest.title">上线前自测清单（可复制）</h2>
+        <p class="lead" data-i18n="dev.selftest.lead">用下面的最小闭环脚本，在自己的联调环境把「申请 → 轮询 → 授权 → 换 token → 取资料 → 撤销」跑通一遍。</p>
+        <pre><code>IM_BASE=https://api.example.com
+APP_ID=app_3f7c9a21
+REDIRECT=https%3A%2F%2Fminiservice.example.com%2Fa380%2F
+
+# 0) 生成 PKCE
+VERIFIER=$(openssl rand -base64 48 | tr -d '=+/' | cut -c1-64)
+CHALLENGE=$(printf '%s' "$VERIFIER" | openssl dgst -binary -sha256 | openssl base64 | tr '+/' '-_' | tr -d '=')
+STATE=$(openssl rand -hex 16)
+
+# 1) 提交申请（首次）→ 记下 appId，等待平台在 IM 管理后台「通过」
+curl -s -X POST "$IM_BASE/open/applications" -H 'Content-Type: application/json' \
+  -d '{"appName":"联调应用","appType":"THIRD_PARTY","callbackUrl":"https://miniservice.example.com/a380/","scopes":["profile.basic"]}'
+
+# 2) 查状态（APPROVED 之后才继续）
+curl -s "$IM_BASE/open/applications/$APP_ID"
+
+# 3) 打印授权地址，浏览器打开并同意（拿到回调里的 code）
+echo "$IM_BASE/oauth/authorize?appId=$APP_ID&amp;redirect_uri=$REDIRECT&amp;scope=profile.basic&amp;state=$STATE&amp;code_challenge=$CHALLENGE&amp;code_challenge_method=S256"
+
+# 4) 用 code 换 token（后台）
+curl -s -X POST "$IM_BASE/oauth/token" -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d "grant_type=authorization_code" -d "code=$CODE" -d "redirect_uri=$REDIRECT" \
+  -d "app_id=$APP_ID" -d "code_verifier=$VERIFIER"
+
+# 5) 取用户资料
+curl -s "$IM_BASE/oauth/userinfo" -H "Authorization: Bearer $ACCESS_TOKEN"
+
+# 6) 撤销
+curl -s -X POST "$IM_BASE/oauth/revoke?token=$ACCESS_TOKEN"</code></pre>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.selftest.l1">code_verifier 为 43–128 字符随机串；code_challenge = BASE64URL(SHA256(code_verifier))，要去掉填充。</li>
+            <li data-i18n="dev.selftest.l2">code 只能用一次且短期有效，重放必须被拒绝；state 不匹配必须直接丢弃。</li>
+            <li data-i18n="dev.selftest.l3">申请未通过（PENDING / REJECTED）时不要引导用户去授权，授权页会提示应用不可用。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="acceptance">
+      <div class="wrap">
+        <h2 data-i18n="dev.accept.title">验收清单（平台侧验收标准）</h2>
+        <div class="panel">
+          <ul>
+            <li data-i18n="dev.accept.r1">申请 → 审批 → 拿到 appId / appSecret，且密钥只在服务端（前端 grep 不到）。</li>
+            <li data-i18n="dev.accept.r2">redirect_uri 与登记 callbackUrl 精确一致；不一致时被拒绝且提示可读。</li>
+            <li data-i18n="dev.accept.r3">首次授权：用户同意 → 回调 code → 换 token → 取 userinfo → 建 / 绑账号 → 你的登录态生效。</li>
+            <li data-i18n="dev.accept.r4">用户拒绝授权：回调带 error=access_denied，页面有明确提示。</li>
+            <li data-i18n="dev.accept.r5">state 不匹配或 code 重放：请求被拒绝。</li>
+            <li data-i18n="dev.accept.r6">撤销 token 后 userinfo 失效；用户解除授权后你的登录态失效，业务数据保留。</li>
+            <li data-i18n="dev.accept.r7">IM 不可用时，已有登录态的用户仍能完成你的核心业务闭环。</li>
+            <li data-i18n="dev.accept.r8">密钥泄露演练：平台重置密钥后旧密钥立即失效。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="errors">
+      <div class="wrap">
+        <h2 data-i18n="dev.errors.title">错误码与排障</h2>
+        <table>
+          <thead><tr><th data-i18n="dev.errors.col1">现象</th><th data-i18n="dev.errors.col2">原因</th><th data-i18n="dev.errors.col3">处理</th></tr></thead>
+          <tbody>
+            <tr><td data-i18n="dev.errors.r1a">申请被驳回（REJECTED）</td><td data-i18n="dev.errors.r1b">材料不全 / scope 过大 / 回调非 HTTPS</td><td data-i18n="dev.errors.r1c">看 rejectReason，修正后重新申请</td></tr>
+            <tr><td data-i18n="dev.errors.r2a">授权页报应用不可用</td><td data-i18n="dev.errors.r2b">appId 不存在或不是 APPROVED 状态</td><td data-i18n="dev.errors.r2c">用 GET /open/applications/{appId} 查状态</td></tr>
+            <tr><td data-i18n="dev.errors.r3a">redirect_uri 校验失败</td><td data-i18n="dev.errors.r3b">与 callbackUrl 不完全一致（尾斜杠 / 端口 / 大小写）</td><td data-i18n="dev.errors.r3c">改成逐字符一致</td></tr>
+            <tr><td data-i18n="dev.errors.r4a">换 token 失败</td><td data-i18n="dev.errors.r4b">code 已用过或过期；code_verifier 与 challenge 不匹配</td><td data-i18n="dev.errors.r4c">code 只能用一次；verifier 用原始串</td></tr>
+            <tr><td data-i18n="dev.errors.r5a">userinfo 返回 401</td><td data-i18n="dev.errors.r5b">access_token 过期或已撤销</td><td data-i18n="dev.errors.r5c">用 refresh_token 续期或重新授权</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="docs">
+      <div class="wrap">
+        <h2 data-i18n="dev.docs.title">SDK 与接入文档</h2>
+        <div class="panel">
+          <p data-i18n="dev.docs.desc">SDK 与接入示例将在开放平台上线时提供下载。当前对接细节（接口、参数、示例、验收标准）以平台交付的最新《IM 开放平台第三方接入指南（v3）》为准，本页与其保持同步。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p data-i18n="footer.copyright">©2026 深圳市译识编元科技有限公司</p>
+    </div>
+  </footer>
+  <script src="/js/i18n.js"></script>
+</body>
+</html>

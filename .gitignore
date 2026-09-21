@@ -1,0 +1,10 @@
+.DS_Store
+*.log
+.env
+.env.*
+*.tar
+.image-verify-*
+.idea/
+.vscode/
+# 客户端安装包为构建产物，随镜像发布，不纳入版本库
+html/download/

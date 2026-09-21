@@ -1,0 +1,16 @@
+# 只把构建镜像需要的文件送入构建上下文
+.git
+.gitignore
+.github
+k8s/
+scripts/
+*.md
+*.sh
+Dockerfile
+.dockerignore
+.DS_Store
+node_modules
+*.log
+.env
+.env.*
+html/download/
