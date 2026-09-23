@@ -28,7 +28,7 @@ spec:
       containers:
         - name: xch-cms
           # 默认使用 ACR VPC 镜像地址,便于 ACK 在专有网络内拉取私有镜像
-          image: registry.example.com/openware/openware-cms:latest
+          image: ghcr.io/openware-io/openware-cms:latest
           imagePullPolicy: Always
           ports:
             - name: http

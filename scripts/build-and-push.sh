@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # ============ Config (can be overridden by env vars) ============
-REGISTRY="${REGISTRY:-registry.example.com}"
+REGISTRY="${REGISTRY:-ghcr.io/openware-io}"
 ACR_NAMESPACE="${ACR_NAMESPACE:-openware}"
 IMAGE_NAME="${IMAGE_NAME:-open-website}"
 PLATFORM="${PLATFORM:-linux/amd64}"
