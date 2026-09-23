@@ -50,8 +50,8 @@
 - Ingress 名：`xch-cms`
 - TLS Secret 名：`openware-tls`
 - 镜像仓库：
-  - 推送使用公网域名：`crpi-2xbf44rg544imbew.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/meta-cogni-cms`
-  - 集群拉取优先使用 VPC 域名：`crpi-2xbf44rg544imbew-vpc.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/meta-cogni-cms`
+  - 推送使用公网域名：`crpi-2xbf44rg544imbew.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/open-website`
+  - 集群拉取优先使用 VPC 域名：`crpi-2xbf44rg544imbew-vpc.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/open-website`
 
 ## 3. 资源职责说明
 
@@ -154,7 +154,7 @@ type: IngressTLS
 示例命令：
 
 ```bash
-docker build --platform linux/amd64 -t crpi-2xbf44rg544imbew.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/meta-cogni-cms:latest -f Dockerfile .
+docker build --platform linux/amd64 -t crpi-2xbf44rg544imbew.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/open-website:latest -f Dockerfile .
 ```
 
 也可以使用脚本：
@@ -173,7 +173,7 @@ bash scripts/build-and-push.sh
 示例命令：
 
 ```bash
-docker push crpi-2xbf44rg544imbew.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/meta-cogni-cms:latest
+docker push crpi-2xbf44rg544imbew.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/open-website:latest
 ```
 
 建议记录每次推送的 digest，用于线上回滚和固定版本。
@@ -464,12 +464,12 @@ kubectl -n meta-cogni rollout restart deployment/xch-cms
 集群实际引用建议格式：
 
 ```text
-crpi-2xbf44rg544imbew-vpc.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/meta-cogni-cms@sha256:<digest>
+crpi-2xbf44rg544imbew-vpc.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/open-website@sha256:<digest>
 ```
 
 ### 8.3 证书续期
 
-证书续期后，需要同步更新 `meta-cogni/meta-cogni-cms6688-tls`。
+证书续期后，需要同步更新 `meta-cogni/open-website6688-tls`。
 
 更新后可重启 ingress controller 或等待自动 reload。
 
