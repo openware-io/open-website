@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: xch-cms
-  namespace: meta-cogni
+  namespace: openware
   labels:
     app: xch-cms
     component: web
@@ -28,7 +28,7 @@ spec:
       containers:
         - name: xch-cms
           # 默认使用 ACR VPC 镜像地址,便于 ACK 在专有网络内拉取私有镜像
-          image: crpi-2xbf44rg544imbew-vpc.cn-hangzhou.personal.cr.aliyuncs.com/meta-cogni/meta-cogni-cms:latest
+          image: registry.example.com/openware/openware-cms:latest
           imagePullPolicy: Always
           ports:
             - name: http

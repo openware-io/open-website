@@ -3,8 +3,8 @@
 set -euo pipefail
 
 # ============ Config (can be overridden by env vars) ============
-REGISTRY="${REGISTRY:-crpi-2xbf44rg544imbew.cn-hangzhou.personal.cr.aliyuncs.com}"
-ACR_NAMESPACE="${ACR_NAMESPACE:-meta-cogni}"
+REGISTRY="${REGISTRY:-registry.example.com}"
+ACR_NAMESPACE="${ACR_NAMESPACE:-openware}"
 IMAGE_NAME="${IMAGE_NAME:-open-website}"
 PLATFORM="${PLATFORM:-linux/amd64}"
 VERSION_FILE="${VERSION_FILE:-VERSION}"
