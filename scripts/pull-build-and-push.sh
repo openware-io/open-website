@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fast-forward pull latest code, then build and push versioned/latest images.
+# Fast-forward a clean worktree, then build a manifest-governed release image.
 set -euo pipefail
 
 REMOTE="${REMOTE:-origin}"
@@ -9,21 +9,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${PROJECT_ROOT}"
 
-STASHED=0
-cleanup() {
-  if [[ "${STASHED}" == "1" ]]; then
-    git stash pop || {
-      echo "WARNING: stash pop failed, please resolve manually." >&2
-      exit 1
-    }
-  fi
-}
-trap cleanup EXIT
-
 if [[ -n "$(git status --porcelain=v1)" ]]; then
-  echo "==> Detected local changes, auto-stashing before pull"
-  git stash push -u -m "auto-stash-before-pull-build-and-push"
-  STASHED=1
+  echo "ERROR: release source worktree must be clean; refusing to stash or build from mixed changes." >&2
+  exit 1
 fi
 
 echo "==> Fetch latest code"
@@ -32,5 +20,5 @@ git fetch "${REMOTE}"
 echo "==> Fast-forward ${BRANCH}"
 git pull --ff-only "${REMOTE}" "${BRANCH}"
 
-echo "==> Build and push images"
+echo "==> Build and push manifest-governed release image"
 "${SCRIPT_DIR}/build-and-push.sh"

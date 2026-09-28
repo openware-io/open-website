@@ -27,9 +27,9 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: xch-cms
-          # 默认使用 ACR VPC 镜像地址,便于 ACK 在专有网络内拉取私有镜像
-          image: ghcr.io/openware-io/openware-cms:latest
-          imagePullPolicy: Always
+          # 发布脚本从已校验的 release manifest 注入该镜像；禁止 latest 和手工 set image。
+          image: __APP_IMAGE_OPEN_WEBSITE__
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 80

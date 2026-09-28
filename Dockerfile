@@ -2,8 +2,19 @@
 # 基于 nginx:alpine,体积小、适合托管静态站点
 FROM nginx:1.27-alpine
 
+ARG IMAGE_NAME
+ARG IMAGE_VERSION
+ARG IMAGE_REVISION
+ARG IMAGE_CREATED
+ARG IMAGE_SOURCE
+
 LABEL maintainer="Vela Chat <xiaocaihong666888@outlook.com>"
-LABEL description="Vela Chat official website static hosting image"
+LABEL description="Vela Chat official website static hosting image" \
+      org.opencontainers.image.title=$IMAGE_NAME \
+      org.opencontainers.image.version=$IMAGE_VERSION \
+      org.opencontainers.image.revision=$IMAGE_REVISION \
+      org.opencontainers.image.created=$IMAGE_CREATED \
+      org.opencontainers.image.source=$IMAGE_SOURCE
 
 # 清理 nginx 默认配置与默认静态页
 RUN rm -rf /etc/nginx/conf.d/default.conf /usr/share/nginx/html/*
