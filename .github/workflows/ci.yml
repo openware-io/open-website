@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate static site inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f Dockerfile
+          test -d html
+          test -f nginx/nginx.conf || test -f nginx.conf
+          if grep -RInE '(BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|AKIA[0-9A-Z]{16})' --exclude-dir=.git .; then
+            echo 'Potential credential found in tracked site files' >&2
+            exit 1
+          fi
