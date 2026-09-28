@@ -1,6 +1,6 @@
 # open-website
 
-GV Chat 官网及静态内容站点（下载页 / 取消页 / 开发者页等），基于纯 HTML + Nginx + 容器化部署。
+Open IM 官网及静态内容站点（下载页 / 取消页 / 开发者页等），基于纯 HTML + Nginx + 容器化部署。
 
 ## 内容结构
 
