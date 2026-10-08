@@ -167,7 +167,7 @@
     </div>
   </footer>
 
-  <script src="js/i18n.js?v=2.2.0-20261008-2"></script>
+  <script src="js/i18n.js?v=2.2.0-20261008-3"></script>
   <script src="assets/qrcode.min.js" defer></script>
   <script>
     (function () {
@@ -272,10 +272,10 @@
           +   (notes ? '<div class="notes">' + escapeHtml(notes) + '</div>' : '')
           +   (!installable ? '<div class="release-warning">' + escapeHtml(t('dl.unsignedWarning')) + '</div>' : '')
           +   '<div class="actions">'
-          +     (downloadUrl && installable ? '<a class="btn" href="' + escapeHtml(downloadUrl) + '" target="_blank" rel="noopener noreferrer">' + t('dl.download') + '</a>' : '<span class="state">' + t(installable ? 'dl.noLink' : 'dl.unsignedDisabled') + '</span>')
+          +     (downloadUrl ? '<a class="btn" href="' + escapeHtml(downloadUrl) + '" target="_blank" rel="noopener noreferrer">' + t('dl.download') + '</a>' : '<span class="state">' + t('dl.noLink') + '</span>')
           +   '</div>'
           + '</div>'
-          + (isDesktop || !installable ? '' : '<div class="qr">'
+          + (isDesktop ? '' : '<div class="qr">'
           +   '<div class="qr-box" id="qrcode"></div>'
           +   '<div class="qr-hint">' + t('dl.qrHint') + '</div>'
           + '</div>')
@@ -283,7 +283,7 @@
 
         card.innerHTML = html;
 
-        if (!isDesktop && downloadUrl && installable) {
+        if (!isDesktop && downloadUrl) {
           renderQr(downloadUrl);
         }
       }
