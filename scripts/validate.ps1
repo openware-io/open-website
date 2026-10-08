@@ -15,6 +15,11 @@ foreach ($file in $htmlFiles) {
   }
 }
 
+$dockerfile = Get-Content -Raw -LiteralPath (Join-Path $root 'Dockerfile')
+foreach ($pattern in @('(?i)Vela Chat', 'xiaocaihong666888@outlook\.com', '18475480558', '\u7ca4ICP\u5907')) {
+  if ($dockerfile -match $pattern) { $violations.Add("Dockerfile: forbidden public image metadata matched '$pattern'") }
+}
+
 $download = Get-Content -Raw -LiteralPath (Join-Path $root 'html\download.html')
 if ($download -notmatch "'/api/v1/client/releases/latest\?platform='") {
   $violations.Add('download.html: public release query must use the same-origin /api/v1 endpoint')

@@ -1,4 +1,4 @@
-# 语法: docker build -t vela-chat-web .
+# 语法: docker build -t open-chat-website .
 # 基于 nginx:alpine,体积小、适合托管静态站点
 FROM nginx:1.27-alpine
 
@@ -8,8 +8,8 @@ ARG IMAGE_REVISION
 ARG IMAGE_CREATED
 ARG IMAGE_SOURCE
 
-LABEL maintainer="Vela Chat <xiaocaihong666888@outlook.com>"
-LABEL description="Vela Chat official website static hosting image" \
+LABEL maintainer="Open Chat contributors"
+LABEL description="Open Chat open-source website static hosting image" \
       org.opencontainers.image.title=$IMAGE_NAME \
       org.opencontainers.image.version=$IMAGE_VERSION \
       org.opencontainers.image.revision=$IMAGE_REVISION \
