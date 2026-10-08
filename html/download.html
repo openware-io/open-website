@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title data-i18n="dl.title">下载 WV Chat</title>
-  <meta name="description" content="下载 WV Chat 最新版本，支持 Android、Windows 与 iOS。" data-i18n-attr="content:dl.desc">
-  <link rel="icon" type="image/png" href="assets/wv-chat-logo.png">
+  <title data-i18n="dl.title">下载 Open Chat</title>
+  <meta name="description" content="下载 Open Chat 最新版本，支持 Android、Windows 与 iOS。" data-i18n-attr="content:dl.desc">
+  <link rel="icon" type="image/png" href="assets/open-chat-logo.png">
   <style>
     :root {
       --blue: #007aff;
@@ -120,7 +120,7 @@
   <header>
     <div class="wrap">
       <nav>
-        <a class="brand" href="index.html"><img class="logo" src="assets/wv-chat-logo.png" alt="WV Chat" width="38" height="38"><span>WV Chat</span></a>
+        <a class="brand" href="index.html"><img class="logo" src="assets/open-chat-logo.png" alt="Open Chat" width="38" height="38"><span>Open Chat</span></a>
         <div class="links">
           <a href="index.html#company" data-i18n="nav.company">公司简介</a>
           <a href="index.html#features" data-i18n="nav.features">功能</a>
@@ -138,8 +138,8 @@
 
   <main>
     <section class="hero">
-      <img class="hero-logo" src="assets/wv-chat-logo.png" alt="WV Chat" width="96" height="96" decoding="async">
-      <h1 data-i18n="dl.h1">下载 WV Chat</h1>
+      <img class="hero-logo" src="assets/open-chat-logo.png" alt="Open Chat" width="96" height="96" decoding="async">
+      <h1 data-i18n="dl.h1">下载 Open Chat</h1>
       <p class="lead" data-i18n="dl.lead">端到端加密即时通讯，私密消息仅参与设备可见。当前支持 Android、Windows 与 iOS。</p>
     </section>
 
@@ -176,7 +176,7 @@
       var base = '/api/v1/client/releases/latest?platform=';
       var currentPlatform = 'android';
       var currentSeq = 0;
-      var cachePrefix = 'wv-dl-cache:';
+      var cachePrefix = 'open-chat-dl-cache:';
       var cacheTtlMs = 5 * 60 * 1000;
 
       function readCache(platform) {
@@ -201,8 +201,8 @@
       }
 
       function t(key) {
-        var lang = (window.WV && window.WV.getLang) ? window.WV.getLang() : 'zh';
-        var d = (window.WV && window.WV.dict && window.WV.dict[lang]) ? window.WV.dict[lang] : {};
+        var lang = (window.OpenChat && window.OpenChat.getLang) ? window.OpenChat.getLang() : 'zh';
+        var d = (window.OpenChat && window.OpenChat.dict && window.OpenChat.dict[lang]) ? window.OpenChat.dict[lang] : {};
         return d[key] != null ? d[key] : key;
       }
 
@@ -257,8 +257,8 @@
 
         var html = '<div class="release">'
           + '<div>'
-          +   '<div class="app-title"><img class="app-logo" src="assets/wv-chat-logo.png" alt="WV Chat">'
-          +     '<div><div class="app-name">WV Chat</div><div class="app-version">v' + escapeHtml(version) + '</div></div></div>'
+          +   '<div class="app-title"><img class="app-logo" src="assets/open-chat-logo.png" alt="Open Chat">'
+          +     '<div><div class="app-name">Open Chat</div><div class="app-version">v' + escapeHtml(version) + '</div></div></div>'
           +   '<div class="meta">'
           +     (size ? '<span>' + t('dl.size') + ' <b>' + fmtBytes(size) + '</b></span>' : '')
           +     (sha ? '<span>' + t('dl.sha') + ' <b class="sha">' + escapeHtml(sha.slice(0, 16)) + '…</b></span>' : '')
@@ -340,7 +340,7 @@
         }
       });
 
-      document.addEventListener('wv:langchange', function () {
+      document.addEventListener('openchat:langchange', function () {
         if (coming[currentPlatform]) { renderComing(coming[currentPlatform]()); } else { loadPlatform(currentPlatform); }
       });
 

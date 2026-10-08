@@ -1,11 +1,11 @@
 /* 官网中英双语 i18n（无依赖，静态站）。用法：元素加 data-i18n="key"；属性加 data-i18n-attr="attr:key"。
-   语言来源：URL ?lang= 或 #lang= 或 localStorage('wv_lang')，默认中文。切换：window.WV.setLang('en'|'zh')。 */
+   语言来源：URL ?lang= 或 #lang= 或 localStorage('open_chat_lang')，默认中文。切换：window.OpenChat.setLang('en'|'zh')。 */
 (function () {
   const DICT = {
     zh: {
-      'brand.name': 'WV Chat',
-      'meta.title': 'WV Chat - 即时通讯与协作',
-      'meta.desc': 'WV Chat 是一款支持单聊、群聊、语音视频通话、文件发送和扫码服务的即时通讯应用。',
+      'brand.name': 'Open Chat',
+      'meta.title': 'Open Chat - 即时通讯与协作',
+      'meta.desc': 'Open Chat 是一款支持单聊、群聊、语音视频通话、文件发送和扫码服务的即时通讯应用。',
       'nav.company': '公司简介',
       'nav.home': '首页',
       'nav.features': '功能',
@@ -17,7 +17,7 @@
       'nav.cancel': '账号注销',
       'nav.lang': 'EN',
       'hero.title': '让沟通更清晰、更高效',
-      'hero.lead': 'WV Chat 支持单聊、群聊、语音视频通话、文件发送和扫码服务，适合个人与团队进行日常沟通。',
+      'hero.lead': 'Open Chat 支持单聊、群聊、语音视频通话、文件发送和扫码服务，适合个人与团队进行日常沟通。',
       'hero.cta1': '获取技术支持',
       'hero.cta2': '查看隐私政策',
       'screen.title': '消息',
@@ -28,7 +28,7 @@
       'screen.r3.name': '运营通知',
       'screen.r3.desc': '新的活动配置已发布',
       'company.title': '公司简介',
-      'company.p1': '深圳市译识编元科技有限公司，注册地位于深圳市，是一家专注于互联网即时通讯技术研发的科技企业。公司主要从事即时通讯应用 WV‑Chat 的开发、运营与技术服务，面向全球用户提供安全稳定的即时聊天、消息通信服务，致力于打造体验良好的跨平台 IM 通讯产品。',
+      'company.p1': '深圳市译识编元科技有限公司，注册地位于深圳市，是一家专注于互联网即时通讯技术研发的科技企业。公司主要从事即时通讯应用 Open Chat 的开发、运营与技术服务，面向全球用户提供安全稳定的即时聊天、消息通信服务，致力于打造体验良好的跨平台 IM 通讯产品。',
       'company.p2': '公司专注移动互联网软件开发、AI 软件开发，重视用户数据安全与个人隐私保护，严格遵守网络安全相关法律法规，为用户提供合规可靠的通讯服务。',
       'features.title': '主要功能',
       'feat.1.t': '单聊与群聊',
@@ -42,17 +42,17 @@
       'feat.5.t': '个人设置',
       'feat.5.d': '支持头像、昵称、语言、外观、账号安全和注销等设置。',
       'support.title': '技术支持',
-      'support.lead': '如果你在使用 WV Chat 时遇到问题，或希望反馈建议，请通过以下方式联系我们。',
+      'support.lead': '如果你在使用 Open Chat 时遇到问题，或希望反馈建议，请通过以下方式联系我们。',
       'support.email': '邮箱：',
       'support.operator': '运营主体：',
       'support.operator.val': '深圳市译识编元科技有限公司',
       'support.pages': '相关页面：',
       'footer.copyright': '©2026 深圳市译识编元科技有限公司',
-      'footer.biz': '业务：即时通讯 IM 软件 WV‑Chat 研发、AI 软件开发、互联网技术开发服务',
+      'footer.biz': '业务：即时通讯 IM 软件 Open Chat 研发、AI 软件开发、互联网技术开发服务',
       'footer.addr': '办公地址：广东省深圳市龙华区民治街道上芬区龙屋工业区源创园玖号 A 栋 206A',
       'footer.tel': '联系电话：+86-18475480558',
       'footer.icp': '粤ICP备2026106235号-1',
-      'dev.title': '开发者 - IM 开放平台第三方接入 | WV Chat',
+      'dev.title': '开发者 - IM 开放平台第三方接入 | Open Chat',
       'dev.desc': 'IM 开放平台第三方接入引导',
       'dev.hero.title': 'IM 开放平台 · 第三方接入',
       'dev.hero.lead': '任何第三方业务系统（SaaS / 打车 / 电商 / 本地生活等）按标准 5 步流程接入 IM：申请 → 审核 → 用户授权 → 后台换证 → 用户同步与业务打通。第三方系统保有独立业务闭环，脱离 IM 也能完整运行。',
@@ -205,14 +205,14 @@
       'dev.errors.r5a': 'userinfo 返回 401', 'dev.errors.r5b': 'access_token 过期或已撤销', 'dev.errors.r5c': '用 refresh_token 续期或重新授权',
       'dev.docs.title': 'SDK 与接入文档',
       'dev.docs.desc': 'SDK 与接入示例将在开放平台上线时提供下载。当前对接细节（接口、参数、示例、验收标准）以平台交付的最新《IM 开放平台第三方接入指南（v3）》为准，本页与其保持同步。',
-      'dl.title': '下载 WV Chat', 'dl.desc': '下载 WV Chat 最新版本，支持 Android、Windows 与 iOS。',
-      'dl.h1': '下载 WV Chat', 'dl.lead': '端到端加密即时通讯，私密消息仅参与设备可见。当前支持 Android、Windows 与 iOS。',
+      'dl.title': '下载 Open Chat', 'dl.desc': '下载 Open Chat 最新版本，支持 Android、Windows 与 iOS。',
+      'dl.h1': '下载 Open Chat', 'dl.lead': '端到端加密即时通讯，私密消息仅参与设备可见。当前支持 Android、Windows 与 iOS。',
       'dl.hint': '下载安装即代表你已阅读并同意',
       'dl.loading': '正在获取最新版本…', 'dl.noRelease': '暂无可用版本，请稍后再试。', 'dl.fetchFail': '获取版本信息失败，请稍后重试。',
       'dl.coming.ios': 'iOS 版本正在筹备中，敬请期待。', 'dl.coming.macos': 'macOS 版本正在筹备中，敬请期待。', 'dl.coming.title': '敬请期待',
       'dl.size': '大小', 'dl.sha': 'SHA-256', 'dl.platform': '平台', 'dl.download': '立即下载', 'dl.noLink': '暂无下载链接', 'dl.qrHint': '手机扫码直接下载',
-      'cancel.title': '账号注销 | WV Chat', 'cancel.desc': '申请注销 WV Chat 账号',
-      'cancel.h1': '申请注销 WV Chat 账号',
+      'cancel.title': '账号注销 | Open Chat', 'cancel.desc': '申请注销 Open Chat 账号',
+      'cancel.h1': '申请注销 Open Chat 账号',
       'cancel.lead': '注销前需先登录验证身份。注销后，你的账号、聊天记录及全部关联数据将被永久删除且无法恢复，请确认已备份需要保留的信息。',
       'cancel.form.account': '用户名', 'cancel.form.account.ph': '请输入登录用户名',
       'cancel.form.password': '登录密码', 'cancel.form.password.ph': '请输入登录密码',
@@ -234,9 +234,9 @@
       'cancel.error.gone': '该账号已注销', 'cancel.error.network': '网络异常，请稍后重试', 'cancel.error.generic': '操作失败，请稍后重试'
     },
     en: {
-      'brand.name': 'WV Chat',
-      'meta.title': 'WV Chat - Instant Messaging & Collaboration',
-      'meta.desc': 'WV Chat is an instant messaging app with 1-on-1 chat, group chat, voice/video calls, file sharing and QR-code services.',
+      'brand.name': 'Open Chat',
+      'meta.title': 'Open Chat - Instant Messaging & Collaboration',
+      'meta.desc': 'Open Chat is an instant messaging app with 1-on-1 chat, group chat, voice/video calls, file sharing and QR-code services.',
       'nav.company': 'Company',
       'nav.home': 'Home',
       'nav.features': 'Features',
@@ -248,7 +248,7 @@
       'nav.cancel': 'Cancel Account',
       'nav.lang': '中文',
       'hero.title': 'Clearer, more efficient communication',
-      'hero.lead': 'WV Chat supports 1-on-1 chat, group chat, voice and video calls, file sharing and QR-code services for individuals and teams.',
+      'hero.lead': 'Open Chat supports 1-on-1 chat, group chat, voice and video calls, file sharing and QR-code services for individuals and teams.',
       'hero.cta1': 'Get support',
       'hero.cta2': 'View privacy policy',
       'screen.title': 'Messages',
@@ -259,7 +259,7 @@
       'screen.r3.name': 'Operations Notice',
       'screen.r3.desc': 'New campaign config published',
       'company.title': 'About Us',
-      'company.p1': 'Shenzhen Yishibian Yuan Technology Co., Ltd. is a technology company focused on internet instant-messaging R&D. The company develops and operates the WV-Chat messaging app, providing secure and stable messaging services to global users and building a cross-platform IM product with a great experience.',
+      'company.p1': 'Shenzhen Yishibian Yuan Technology Co., Ltd. is a technology company focused on internet instant-messaging R&D. The company develops and operates the Open Chat messaging app, providing secure and stable messaging services to global users and building a cross-platform IM product with a great experience.',
       'company.p2': 'The company focuses on mobile internet and AI software development, values user data security and privacy protection, strictly complies with cybersecurity laws and regulations, and provides compliant and reliable communication services.',
       'features.title': 'Key Features',
       'feat.1.t': '1-on-1 & Group Chat',
@@ -273,17 +273,17 @@
       'feat.5.t': 'Personal Settings',
       'feat.5.d': 'Avatar, nickname, language, appearance, account security and logout.',
       'support.title': 'Support',
-      'support.lead': 'If you run into issues using WV Chat or want to share feedback, contact us through the channels below.',
+      'support.lead': 'If you run into issues using Open Chat or want to share feedback, contact us through the channels below.',
       'support.email': 'Email: ',
       'support.operator': 'Operator: ',
       'support.operator.val': 'Shenzhen Yishibian Yuan Technology Co., Ltd.',
       'support.pages': 'Related pages: ',
       'footer.copyright': '©2026 Shenzhen Yishibian Yuan Technology Co., Ltd.',
-      'footer.biz': 'Business: WV-Chat IM software R&D, AI software development, internet technology services',
+      'footer.biz': 'Business: Open Chat IM software R&D, AI software development, internet technology services',
       'footer.addr': 'Address: A-206A, Building 9, Yuanchuang Yuan, Longwu Industrial Zone, Minzhi Street, Longhua District, Shenzhen, Guangdong, China',
       'footer.tel': 'Tel: +86-18475480558',
       'footer.icp': 'ICP 粤ICP备2026106235号-1',
-      'dev.title': 'Developers - IM Open Platform Integration | WV Chat',
+      'dev.title': 'Developers - IM Open Platform Integration | Open Chat',
       'dev.desc': 'IM open platform third-party integration guide',
       'dev.hero.title': 'IM Open Platform · Third-Party Integration',
       'dev.hero.lead': 'Any third-party business system (SaaS / ride-hailing / e-commerce / local services) integrates with IM through a standard 5-step flow: apply → review → user authorization → back-channel exchange → user sync and business integration. The third-party system keeps an independent business loop and runs fully without IM.',
@@ -436,14 +436,14 @@
       'dev.errors.r5a': 'userinfo returns 401', 'dev.errors.r5b': 'access_token expired or revoked', 'dev.errors.r5c': 'Refresh with refresh_token or authorize again',
       'dev.docs.title': 'SDK & Integration Docs',
       'dev.docs.desc': 'The SDK and integration samples will be available for download when the open platform launches. Until then, the delivered "IM Open Platform Third-Party Integration Guide (v3)" is the reference for interfaces, parameters, examples and acceptance criteria, and this page stays in sync with it.',
-      'dl.title': 'Download WV Chat', 'dl.desc': 'Download the latest WV Chat for Android, Windows and iOS.',
-      'dl.h1': 'Download WV Chat', 'dl.lead': 'End-to-end encrypted messaging; private messages are visible only to participating devices. Currently supports Android, Windows and iOS.',
+      'dl.title': 'Download Open Chat', 'dl.desc': 'Download the latest Open Chat for Android, Windows and iOS.',
+      'dl.h1': 'Download Open Chat', 'dl.lead': 'End-to-end encrypted messaging; private messages are visible only to participating devices. Currently supports Android, Windows and iOS.',
       'dl.hint': 'By downloading and installing, you agree that you have read and accepted the',
       'dl.loading': 'Fetching latest version…', 'dl.noRelease': 'No version available yet, please try again later.', 'dl.fetchFail': 'Failed to fetch version info, please try again later.',
       'dl.coming.ios': 'The iOS version is in preparation, stay tuned.', 'dl.coming.macos': 'The macOS version is in preparation, stay tuned.', 'dl.coming.title': 'Coming Soon',
       'dl.size': 'Size', 'dl.sha': 'SHA-256', 'dl.platform': 'Platform', 'dl.download': 'Download', 'dl.noLink': 'No download link', 'dl.qrHint': 'Scan to download on phone',
-      'cancel.title': 'Account Cancellation | WV Chat', 'cancel.desc': 'Request to cancel your WV Chat account',
-      'cancel.h1': 'Cancel your WV Chat account',
+      'cancel.title': 'Account Cancellation | Open Chat', 'cancel.desc': 'Request to cancel your Open Chat account',
+      'cancel.h1': 'Cancel your Open Chat account',
       'cancel.lead': 'You must sign in to verify your identity before cancelling. After cancellation, your account, chat history and all related data will be permanently deleted and cannot be recovered. Please back up anything you need first.',
       'cancel.form.account': 'Username', 'cancel.form.account.ph': 'Enter your username',
       'cancel.form.password': 'Password', 'cancel.form.password.ph': 'Enter your password',
@@ -471,7 +471,7 @@
   function detectLang() {
     const url = new URL(window.location.href);
     const q = url.searchParams.get('lang') || url.hash.replace('#lang=', '');
-    const stored = localStorage.getItem('wv_lang');
+    const stored = localStorage.getItem('open_chat_lang');
     if (q === 'en' || q === 'zh') return q;
     if (stored === 'en' || stored === 'zh') return stored;
     const nav = (navigator.language || 'zh').toLowerCase();
@@ -497,8 +497,8 @@
     });
     const btn = document.querySelector('[data-lang-toggle]');
     if (btn) btn.textContent = DICT[lang]['nav.lang'] || (lang === 'en' ? '中文' : 'EN');
-    localStorage.setItem('wv_lang', lang);
-    document.dispatchEvent(new CustomEvent('wv:langchange', { detail: { lang: lang } }));
+    localStorage.setItem('open_chat_lang', lang);
+    document.dispatchEvent(new CustomEvent('openchat:langchange', { detail: { lang: lang } }));
   }
 
   function setLang(lang) { apply(lang === 'en' ? 'en' : 'zh'); }
@@ -509,5 +509,5 @@
     if (btn) btn.addEventListener('click', function () { setLang(current === 'en' ? 'zh' : 'en'); });
   });
 
-  window.WV = { setLang: setLang, getLang: function () { return current; }, dict: DICT };
+  window.OpenChat = { setLang: setLang, getLang: function () { return current; }, dict: DICT };
 })();

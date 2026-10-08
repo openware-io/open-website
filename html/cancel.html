@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title data-i18n="cancel.title">账号注销 | WV Chat</title>
-  <meta name="description" content="申请注销 WV Chat 账号" data-i18n-attr="content:cancel.desc">
-  <link rel="icon" type="image/png" href="assets/wv-chat-logo.png">
+  <title data-i18n="cancel.title">账号注销 | Open Chat</title>
+  <meta name="description" content="申请注销 Open Chat 账号" data-i18n-attr="content:cancel.desc">
+  <link rel="icon" type="image/png" href="assets/open-chat-logo.png">
   <style>
     :root {
       --blue: #007aff;
@@ -109,7 +109,7 @@
   <header>
     <div class="wrap">
       <nav>
-        <a class="brand" href="index.html"><img class="logo" src="assets/wv-chat-logo.png" alt="WV Chat" width="38" height="38"><span>WV Chat</span></a>
+        <a class="brand" href="index.html"><img class="logo" src="assets/open-chat-logo.png" alt="Open Chat" width="38" height="38"><span>Open Chat</span></a>
         <div class="links">
           <a href="index.html#company" data-i18n="nav.company">公司简介</a>
           <a href="index.html#features" data-i18n="nav.features">功能</a>
@@ -128,7 +128,7 @@
   <main>
     <div class="wrap">
       <div class="card" id="form-card">
-        <h1 data-i18n="cancel.h1">申请注销 WV Chat 账号</h1>
+        <h1 data-i18n="cancel.h1">申请注销 Open Chat 账号</h1>
         <p class="lead" data-i18n="cancel.lead">注销前需先登录验证身份。注销后，你的账号、聊天记录及全部关联数据将被永久删除且无法恢复，请确认已备份需要保留的信息。</p>
 
         <div class="field">
@@ -182,7 +182,7 @@
     (function () {
       var API_BASE = '/api/v1';
       var STEP_CODES = ['account', 'chat_records', 'device_tokens', 'friends', 'profile_settings', 'client_data'];
-      var STORAGE_KEY = 'wv-cancel-app';
+      var STORAGE_KEY = 'open-chat-cancel-app';
 
       var formCard = document.getElementById('form-card');
       var statusCard = document.getElementById('status-card');
@@ -202,8 +202,8 @@
       var currentStatus = null;
 
       function t(key) {
-        var lang = (window.WV && window.WV.getLang) ? window.WV.getLang() : 'zh';
-        var d = (window.WV && window.WV.dict && window.WV.dict[lang]) ? window.WV.dict[lang] : {};
+        var lang = (window.OpenChat && window.OpenChat.getLang) ? window.OpenChat.getLang() : 'zh';
+        var d = (window.OpenChat && window.OpenChat.dict && window.OpenChat.dict[lang]) ? window.OpenChat.dict[lang] : {};
         return d[key] != null ? d[key] : key;
       }
 
@@ -348,7 +348,7 @@
         submit();
       });
 
-      document.addEventListener('wv:langchange', function () {
+      document.addEventListener('openchat:langchange', function () {
         if (currentStatus) renderStatus(currentStatus);
       });
 
