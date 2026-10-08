@@ -196,6 +196,10 @@
         } catch (e) { /* 忽略隐私模式/配额错误 */ }
       }
 
+      function removeCache(platform) {
+        try { localStorage.removeItem(cachePrefix + platform); } catch (e) { /* 忽略隐私模式错误 */ }
+      }
+
       function t(key) {
         var lang = (window.WV && window.WV.getLang) ? window.WV.getLang() : 'zh';
         var d = (window.WV && window.WV.dict && window.WV.dict[lang]) ? window.WV.dict[lang] : {};
@@ -310,7 +314,8 @@
           .then(function (json) {
             var data = json && json.data;
             if (!data) {
-              if (seq === currentSeq && !cached) renderComing(t('dl.noRelease'));
+              removeCache(platform);
+              if (seq === currentSeq) renderComing(t('dl.noRelease'));
               return;
             }
             writeCache(platform, data);
