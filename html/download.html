@@ -109,6 +109,7 @@
     .coming p { margin: 0; }
 
     .state { color: var(--muted); padding: 32px 0; text-align: center; }
+    .release-warning { margin-top: 16px; padding: 12px 14px; border: 1px solid #f0b429; border-radius: 10px; background: #fff8e1; color: #7a4b00; line-height: 1.6; }
     .hint { text-align: center; color: var(--muted); font-size: 13px; margin-top: 22px; }
 
     footer { padding: 36px 0; color: var(--muted); border-top: 1px solid var(--line); text-align: center; font-size: 14px; }
@@ -252,6 +253,11 @@
         var downloadUrl = art && art.downloadUrl ? art.downloadUrl : (data.storeUrl || '');
         var sha = art && art.sha256 ? art.sha256 : '';
         var size = art ? art.sizeBytes : null;
+        var signing = {};
+        if (art && art.signingMetadata) {
+          try { signing = typeof art.signingMetadata === 'string' ? JSON.parse(art.signingMetadata) : art.signingMetadata; } catch (ignore) { signing = {}; }
+        }
+        var installable = signing.installable !== false && signing.status !== 'unsigned';
         var platformLabel = isDesktop ? 'Windows' : 'Android';
 
         var html = '<div class="release">'
@@ -264,8 +270,9 @@
           +     '<span>' + t('dl.platform') + ' <b>' + platformLabel + '</b></span>'
           +   '</div>'
           +   (notes ? '<div class="notes">' + escapeHtml(notes) + '</div>' : '')
+          +   (!installable ? '<div class="release-warning">' + escapeHtml(t('dl.unsignedWarning')) + '</div>' : '')
           +   '<div class="actions">'
-          +     (downloadUrl ? '<a class="btn" href="' + escapeHtml(downloadUrl) + '" target="_blank" rel="noopener noreferrer">' + t('dl.download') + '</a>' : '<span class="state">' + t('dl.noLink') + '</span>')
+          +     (downloadUrl && installable ? '<a class="btn" href="' + escapeHtml(downloadUrl) + '" target="_blank" rel="noopener noreferrer">' + t('dl.download') + '</a>' : '<span class="state">' + t(installable ? 'dl.noLink' : 'dl.unsignedDisabled') + '</span>')
           +   '</div>'
           + '</div>'
           + (isDesktop ? '' : '<div class="qr">'
@@ -276,7 +283,7 @@
 
         card.innerHTML = html;
 
-        if (!isDesktop && downloadUrl) {
+        if (!isDesktop && downloadUrl && installable) {
           renderQr(downloadUrl);
         }
       }
