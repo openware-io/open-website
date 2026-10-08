@@ -275,7 +275,7 @@
           +     (downloadUrl && installable ? '<a class="btn" href="' + escapeHtml(downloadUrl) + '" target="_blank" rel="noopener noreferrer">' + t('dl.download') + '</a>' : '<span class="state">' + t(installable ? 'dl.noLink' : 'dl.unsignedDisabled') + '</span>')
           +   '</div>'
           + '</div>'
-          + (isDesktop ? '' : '<div class="qr">'
+          + (isDesktop || !installable ? '' : '<div class="qr">'
           +   '<div class="qr-box" id="qrcode"></div>'
           +   '<div class="qr-hint">' + t('dl.qrHint') + '</div>'
           + '</div>')
