@@ -19,6 +19,9 @@ $download = Get-Content -Raw -LiteralPath (Join-Path $root 'html\download.html')
 if ($download -notmatch "'/api/v1/client/releases/latest\?platform='") {
   $violations.Add('download.html: public release query must use the same-origin /api/v1 endpoint')
 }
+if ($download -notmatch "data\.storeUrl \|\| ''") {
+  $violations.Add('download.html: store releases must fall back to the managed storeUrl')
+}
 $cancel = Get-Content -Raw -LiteralPath (Join-Path $root 'html\cancel.html')
 if ($cancel -notmatch "var API_BASE = '/api/v1';") {
   $violations.Add('cancel.html: account cancellation must use the same-origin /api/v1 endpoint')

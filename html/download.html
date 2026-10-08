@@ -226,10 +226,10 @@
       function pickArtifact(data, platform) {
         var isDesktop = platform === 'windows';
         var artifacts = data.artifacts || [];
-        var preferred = isDesktop ? ['exe', 'msix'] : ['apk'];
+        var preferred = isDesktop ? ['exe', 'msix'] : ['apk', 'google-play'];
         for (var i = 0; i < preferred.length; i++) {
           var hit = artifacts.find(function (a) {
-            return a.downloadUrl && a.packageType && a.packageType.toLowerCase() === preferred[i];
+            return (a.downloadUrl || data.storeUrl) && a.packageType && a.packageType.toLowerCase() === preferred[i];
           });
           if (hit) return hit;
         }
@@ -246,7 +246,7 @@
         var notes = data.releaseNotes || '';
         var isDesktop = platform === 'windows';
         var art = pickArtifact(data, platform);
-        var downloadUrl = art ? art.downloadUrl : '';
+        var downloadUrl = art && art.downloadUrl ? art.downloadUrl : (data.storeUrl || '');
         var sha = art && art.sha256 ? art.sha256 : '';
         var size = art ? art.sizeBytes : null;
         var platformLabel = isDesktop ? 'Windows' : 'Android';
