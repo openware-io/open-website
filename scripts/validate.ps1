@@ -10,7 +10,7 @@ $violations = [System.Collections.Generic.List[string]]::new()
 
 foreach ($file in $htmlFiles) {
   $content = Get-Content -Raw -LiteralPath $file.FullName
-  foreach ($pattern in @('api\.dev\.example\.com', '(?:href|src)="/(?!api/)', '192\.168\.\d+\.\d+', 'local-minio-access-key', 'MINIO_ROOT_PASSWORD', 'e8280ac0d25d4bc0a1e1', '-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----', '(?i)w[v]')) {
+  foreach ($pattern in @('api\.dev\.example\.com', '(?:href|src)="/(?!api/)', '192\.168\.\d+\.\d+', 'local-minio-access-key', 'MINIO_ROOT_PASSWORD', 'e8280ac0d25d4bc0a1e1', '-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----', '(?i)w[v]', '\u6df1\u5733\u5e02\u8bd1\u8bc6\u7f16\u5143\u79d1\u6280\u6709\u9650\u516c\u53f8', 'xiaocaihong666888@outlook\.com', '18475480558', '\u7ca4ICP\u5907')) {
     if ($content -match $pattern) { $violations.Add("$($file.Name): forbidden public-site content matched '$pattern'") }
   }
 }
