@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title data-i18n="dl.title">下载 WV Chat</title>
   <meta name="description" content="下载 WV Chat 最新版本，支持 Android、Windows 与 iOS。" data-i18n-attr="content:dl.desc">
-  <link rel="icon" type="image/png" href="/assets/wv-chat-logo.png">
-  <link rel="preconnect" href="https://api.dev.example.com" crossorigin>
-  <link rel="dns-prefetch" href="https://api.dev.example.com">
+  <link rel="icon" type="image/png" href="assets/wv-chat-logo.png">
   <style>
     :root {
       --blue: #007aff;
@@ -122,16 +120,16 @@
   <header>
     <div class="wrap">
       <nav>
-        <a class="brand" href="/index.html"><img class="logo" src="/assets/wv-chat-logo.png" alt="WV Chat" width="38" height="38"><span>WV Chat</span></a>
+        <a class="brand" href="index.html"><img class="logo" src="assets/wv-chat-logo.png" alt="WV Chat" width="38" height="38"><span>WV Chat</span></a>
         <div class="links">
-          <a href="/index.html#company" data-i18n="nav.company">公司简介</a>
-          <a href="/index.html#features" data-i18n="nav.features">功能</a>
-          <a href="/download.html" class="active" data-i18n="nav.download">下载</a>
-          <a href="/developer.html" data-i18n="nav.developer">开发者</a>
-          <a href="/index.html#support" data-i18n="nav.support">技术支持</a>
-          <a href="/cancel.html" data-i18n="nav.cancel">账号注销</a>
-          <a href="/privacy.html" data-i18n="nav.privacy">隐私政策</a>
-          <a href="/terms.html" data-i18n="nav.terms">用户协议</a>
+          <a href="index.html#company" data-i18n="nav.company">公司简介</a>
+          <a href="index.html#features" data-i18n="nav.features">功能</a>
+          <a href="download.html" class="active" data-i18n="nav.download">下载</a>
+          <a href="developer.html" data-i18n="nav.developer">开发者</a>
+          <a href="index.html#support" data-i18n="nav.support">技术支持</a>
+          <a href="cancel.html" data-i18n="nav.cancel">账号注销</a>
+          <a href="privacy.html" data-i18n="nav.privacy">隐私政策</a>
+          <a href="terms.html" data-i18n="nav.terms">用户协议</a>
           <button class="lang-btn" type="button" data-lang-toggle>EN</button>
         </div>
       </nav>
@@ -140,7 +138,7 @@
 
   <main>
     <section class="hero">
-      <img class="hero-logo" src="/assets/wv-chat-logo.png" alt="WV Chat" width="96" height="96" decoding="async">
+      <img class="hero-logo" src="assets/wv-chat-logo.png" alt="WV Chat" width="96" height="96" decoding="async">
       <h1 data-i18n="dl.h1">下载 WV Chat</h1>
       <p class="lead" data-i18n="dl.lead">端到端加密即时通讯，私密消息仅参与设备可见。当前支持 Android、Windows 与 iOS。</p>
     </section>
@@ -159,7 +157,7 @@
       </div>
     </section>
 
-    <p class="hint" data-i18n="dl.hint">下载安装即代表你已阅读并同意 <a href="/privacy.html" data-i18n="nav.privacy">隐私政策</a> 与 <a href="/terms.html" data-i18n="nav.terms">用户协议</a>。</p>
+    <p class="hint" data-i18n="dl.hint">下载安装即代表你已阅读并同意 <a href="privacy.html" data-i18n="nav.privacy">隐私政策</a> 与 <a href="terms.html" data-i18n="nav.terms">用户协议</a>。</p>
   </main>
 
   <footer>
@@ -169,13 +167,13 @@
     </div>
   </footer>
 
-  <script src="/js/i18n.js"></script>
-  <script src="/assets/qrcode.min.js" defer></script>
+  <script src="js/i18n.js"></script>
+  <script src="assets/qrcode.min.js" defer></script>
   <script>
     (function () {
       var card = document.getElementById('card');
       var tabs = document.getElementById('tabs');
-      var base = 'https://api.dev.example.com/api/v1/client/releases/latest?platform=';
+      var base = '/api/v1/client/releases/latest?platform=';
       var currentPlatform = 'android';
       var currentSeq = 0;
       var cachePrefix = 'wv-dl-cache:';
@@ -255,7 +253,7 @@
 
         var html = '<div class="release">'
           + '<div>'
-          +   '<div class="app-title"><img class="app-logo" src="/assets/wv-chat-logo.png" alt="WV Chat">'
+          +   '<div class="app-title"><img class="app-logo" src="assets/wv-chat-logo.png" alt="WV Chat">'
           +     '<div><div class="app-name">WV Chat</div><div class="app-version">v' + escapeHtml(version) + '</div></div></div>'
           +   '<div class="meta">'
           +     (size ? '<span>' + t('dl.size') + ' <b>' + fmtBytes(size) + '</b></span>' : '')
@@ -290,7 +288,7 @@
         if (window.QRCode) { new QRCode(box, opts); return; }
         // qrcode.min.js 已 defer，未就绪时动态加载后再渲染
         var s = document.createElement('script');
-        s.src = '/assets/qrcode.min.js';
+        s.src = 'assets/qrcode.min.js';
         s.onload = function () { new QRCode(box, opts); };
         document.head.appendChild(s);
       }
